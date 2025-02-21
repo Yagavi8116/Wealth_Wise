@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Subscription Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="icon" href="data:,">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-right">
+            <button id="notificationButton" class="notification-button">
+                <i class="fas fa-bell"></i>
+                <span id="notificationCount" class="badge badge-danger" style="display: none;">0</span>
+            </button>
+            <div id="notificationPopup" class="notification-popup" style="display: none;">
+                <h6>Notifications</h6>
+                <div id="notificationList"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Smart Subscription Tracker</h1>
+        <form id="subscriptionForm">
+            <label for="serviceName">Choose the subscribed service:</label>
+            <div class="custom-dropdown">
+                <input type="text" id="serviceDisplay" placeholder="Selected service" readonly>
+                <button id="dropdownButton"><span class="placeholder-text">Select a Service</span></button>
+                <ul id="dropdownList" class="dropdown-options">
+                    <li data-value="spotify"><img src="../static/logos/spotify.png" alt="Spotify"> <span>Spotify</span></li>
+                    <li data-value="youtube"><img src="../static/logos/youtube.png" alt="YouTube"> <span>YouTube</span></li>
+                    <li data-value="google-drive"><img src="../static/logos/google-drive.png" alt="Google Drive"> <span>Google Drive</span></li>
+                    <li data-value="netflix"><img src="../static/logos/netflix.png" alt="Netflix"> <span>Netflix</span></li>
+                    <li data-value="amazon-prime"><img src="../static/logos/amazon-prime.png" alt="Amazon Prime"> <span>Amazon Prime</span></li>
+                    <li data-value="linkedin"><img src="../static/logos/linkedin.png" alt="LinkedIn"> <span>LinkedIn</span></li>
+                </ul>
+                <input type="hidden" id="serviceName">
+            </div>
+            <label for="nextPaymentDate">Enter the last date:</label>
+            <input type="date" id="nextPaymentDate" required>
+            <label for="cost">Enter the amount:</label>
+            <input type="number" id="cost" placeholder="Enter amount in USD" required>
+            <button type="submit">Add Subscription</button>
+        </form>
+        <h2>My Subscriptions</h2>
+        <ul id="subscriptionList"></ul>
+        <div id="notificationPopup" class="notification-popup" style="display:none;"></div>
+    </div>
+
+    <!-- AI Button -->
+    <button id="askAiButton" class="ai-button">
+        <i class="fas fa-robot"></i> Ask AI
+    </button>
+
+    <!-- AI Popup Window -->
+    <div id="aiPopup" class="ai-popup">
+        <div class="ai-popup-content">
+            <span id="closeAiPopup" class="close">&times;</span>
+            <iframe id="aiFrame" src="subscriptionAnalysis.html"></iframe>
+        </div>
+    </div>
+
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

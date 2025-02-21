@@ -1,0 +1,472 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 20px;
+    background-color: #67065f;
+}
+.container-sub {
+    position: relative;
+    max-width: 1000px;
+    top: -20px;
+    margin: auto;
+    padding: 20px;
+    background: #67065f;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+button {
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background: #218838;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #67065f;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+h1, h2 {
+    color: #333;
+}
+
+select, input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.info-icon {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+#dropdownButton {
+    width: 100%;
+}
+
+#serviceDisplay{
+    width: 100%;
+}
+
+#dropdownButton , #serviceDisplay{
+    height: 40px;
+    padding: 10px;
+    font-size: 16px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+}
+
+.dropdown-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    display: none;
+    z-index: 1000;
+}
+
+.dropdown-options li {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    justify-content: flex-start;
+}
+
+.dropdown-options li img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.dropdown-options li span {
+    margin-left: 10px;
+}
+
+.dropdown-options li:hover {
+    background: #f0f0f0;
+}
+
+.show {
+    display: block;
+}
+
+/* Labels */
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+/* Input Fields */
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.placeholder-text {
+    color: #888;
+    font-style: italic;
+}
+
+/* Notification Popup */
+.notification-popup {
+    position: fixed;
+    top: 10px;
+    right: 50px;
+    background: #ff5733;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    font-weight: bold;
+}
+
+/* AI Button Styling */
+.ai-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+}
+
+.ai-button:hover {
+    background-color: #0056b3;
+}
+
+/* AI Popup Styling */
+.ai-popup {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 400px;
+    height: 500px;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.ai-popup-content {
+    width: 100%;
+    height: 100%;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#notificationButton {
+    position: fixed;  /* Keeps the button at the top-right */
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#notificationButton i {
+    font-size: 18px;
+}
+
+.badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+.notification-popup {
+    position: fixed;  /* Ensures it stays aligned even on scroll */
+    top: 60px;        /* Adjust to appear below the button */
+    right: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    width: 250px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.notification-popup h6 {
+    margin: 0;
+    padding: 8px;
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+/* Show popup when active */
+.notification-popup.active {
+    display: block;
+}
+
+.date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.date-inputs input {
+    flex: 1;
+    padding: 5px;
+}
+
+.subscription-logo {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.subscription-info {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+    height: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #4caf50;
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+    border-radius: 10px;
+    color: white;
+    line-height: 20px;
+}
+/* 
+.action-btn {
+    position: relative;
+    background: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 5px;
+}
+
+.action-popup {
+    display: none;
+    position: absolute;
+    background: white;
+    right: -150px; 
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.terminate-btn, .renew-btn {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.terminate-btn {
+    background: red;
+    color: white;
+}
+
+.renew-btn {
+    background: green;
+    color: white;
+} */
+
+.action-popup {
+    display: none;
+    position: absolute;
+    right: -120px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 120px;
+    z-index: 100;
+}
+
+.action-btn {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 15px;
+}
+
+.terminate-btn, .renew-btn {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.terminate-btn {
+    background: red;
+    color: white;
+}
+
+.renew-btn {
+    background: green;
+    color: white;
+}
+
+.dashboard-content{
+    border-radius: 12px;
+    border: 2px solid #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.card-header{
+    border-bottom: 2px solid #222;
+    
+}

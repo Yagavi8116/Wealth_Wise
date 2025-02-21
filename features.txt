@@ -1,0 +1,44 @@
+1). Goal-Based Budgeting – Users can set financial goals (e.g., vacation, buying a car) and track progress toward them with automated savings suggestions.
+
+2). Smart Subscription Tracker – Automatically detects recurring subscriptions and notifies users of upcoming payments, unused services, or potential savings by switching plans.
+
+3). Financial Health Score – An AI-driven score that evaluates a user's financial stability based on spending habits, savings, debt, and investments.
+
+4). Family Finance Dashboard – Allows multiple users (family members) to manage shared expenses, budget, and savings goals together.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5). Group Investment Pool
+Friends/family can invest together in mutual funds, stocks, or real estate.
+Track joint investments and profits in one dashboard.
+
+6). Subscription & Bill Sharing
+Track shared subscriptions (Netflix, Spotify, Prime) and split costs accordingly.
+Get reminders when payments are due. [ waiting list]
+
+7). Parent-Child Financial Management
+Parents can set allowances and monitor children’s spending habits.
+Set savings goals and financial education tools for kids.
+
+8). Peer-to-Peer Loans & Lending Tracker
+Track loans between friends/family, repayment schedules, and interest-free agreements.
+Auto-reminders for repayments to avoid awkward conversations.
+
+9). Expense Visualizer – Interactive charts and graphs that show financial trends, spending categories, and potential areas for improvement.
+
+10). Account details.
