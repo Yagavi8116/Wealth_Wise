@@ -49,5 +49,59 @@
             </div>
         </section>
     </div>
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHkdMeDrEVGtMIJ6_x8hlxyIaO87RAqsk",
+            authDomain: "wealthwise-3478b.firebaseapp.com",
+            projectId: "wealthwise-3478b",
+            storageBucket: "wealthwise-3478b.appspot.com",
+            messagingSenderId: "855679488886",
+            appId: "1:855679488886:web:3faa36dd9f9cbceabba057",
+            measurementId: "G-THF8SY4BZ2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Handle Form Submission
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("register-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                // Get input values
+                const fullName = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("pass").value;
+                const confirmPassword = document.getElementById("re_pass").value;
+
+                // Validate passwords match
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match!");
+                    return;
+                }
+
+                try {
+                    // Create user with Firebase Authentication
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // Success message
+                    alert(`User registered successfully! Welcome, ${fullName}`);
+
+                    // Optionally, redirect user or store additional user data
+                    console.log(user);
+                } catch (error) {
+                    console.error("Error signing up:", error.message);
+                    alert(error.message);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
