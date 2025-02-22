@@ -174,20 +174,27 @@ display-flex, .display-flex, .display-flex-center, .signup-content, .signin-cont
   p {
     margin-bottom: 0px;
     font-size: 15px;
-    color: #777; }
+    color: #000000; }
   
   h2 {
     line-height: 1.66;
     margin: 0;
     padding: 0;
     font-weight: bold;
-    color: #222;
+    color: #000000;
     font-family: Poppins;
     font-size: 36px; }
   
   .main {
-    background: #f8f8f8;
-    padding: 150px 0; }
+    background: #090909;
+    padding: 50px 0; 
+    display: flex;
+    min-height: 100vh;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    min-height: 50vh; /* Full viewport height */
+    /* padding: 20px 0; Optional padding to avoid touching edges */
+  }
   
   .clear {
     clear: both; }
@@ -198,7 +205,11 @@ display-flex, .display-flex, .display-flex-center, .signup-content, .signin-cont
     color: #222;
     background: #f8f8f8;
     font-weight: 400;
-    font-family: Poppins; }
+    font-family: Poppins; 
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
   
   .container {
     width: 900px;
@@ -250,11 +261,27 @@ display-flex, .display-flex, .display-flex-center, .signup-content, .signin-cont
     -ms-transform: translate(-50%, -50%); }
   
   .signup {
-    margin-bottom: 150px; }
+    margin-bottom: 150px; 
+  }
+
+  .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
   
   .signup-content {
-    padding: 75px 0; }
+    padding: 75px 0; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
   
+  .signup-form {
+    padding: 20px;
+  }
+
   .signup-form, .signup-image, .signin-form, .signin-image {
     width: 50%;
     overflow: hidden; }
@@ -590,4 +617,34 @@ display-flex, .display-flex, .display-flex-center, .signup-content, .signin-cont
       margin-bottom: 10px; } }
   
   /*# sourceMappingURL=style.css.map */
-  
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Popup Styling */
+.popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #28a745;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.popup.error {
+  background: #dc3545; /* Red for errors */
+}
+
+/* Fade in effect */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
