@@ -41,6 +41,36 @@ body {
     color: white;
 }
 
+#userDetailsBox {
+    width: 50%;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: white;
+    font-family: 'Playfair Display', serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+td {
+    border: 1px solid white;
+    padding: 10px;
+    text-align: left;
+}
+
+td:first-child {
+    font-weight: bold;
+    width: 40%;
+}
+
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
     margin-bottom: 0.5rem;

@@ -1,3 +1,90 @@
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+// ✅ Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCHkdMeDrEVGtMIJ6_x8hlxyIaO87RAqsk",
+    authDomain: "wealthwise-3478b.firebaseapp.com",
+    projectId: "wealthwise-3478b",
+    storageBucket: "wealthwise-3478b.appspot.com",
+    messagingSenderId: "855679488886",
+    appId: "1:855679488886:web:3faa36dd9f9cbceabba057",
+    measurementId: "G-THF8SY4BZ2",
+    databaseURL: "https://wealthwise-3478b-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+
+// ✅ Initialize Firebase
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// ✅ Function to fetch user details from Firebase and store in localStorage
+async function fetchUserDetails(uid) {
+    const userRef = ref(db, `users/${uid}`);
+    try {
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+            const userData = snapshot.val();
+            console.log("Fetched user details from Firebase:", userData);
+
+            // Store in localStorage
+            localStorage.setItem("userName", userData.fullName || "User");
+
+            displayUserName();
+        } else {
+            console.warn("User data not found in database.");
+        }
+    } catch (error) {
+        console.error("Error fetching user details:", error);
+    }
+}
+
+// ✅ Function to display user name from localStorage
+function displayUserName() {
+    const displayNameElement = document.getElementById("displayName");
+    if (displayNameElement) {
+        displayNameElement.textContent = localStorage.getItem("userName") || "Guest";
+    }
+}
+
+// ✅ Detect if user is logged in and fetch details
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("User is logged in:", user.uid);
+
+        // Fetch details only if not in localStorage
+        if (!localStorage.getItem("userName")) {
+            console.log("Fetching details from Firebase...");
+            await fetchUserDetails(user.uid);
+        } else {
+            console.log("Fetching details from localStorage...");
+            displayUserName();
+        }
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
+// ✅ Run when page loads
+document.addEventListener("DOMContentLoaded", displayUserName);
+
+// ✅ Run when user switches back to tab
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+        displayUserName();
+    }
+});
+
+// ✅ Logout function
+function logout() {
+    localStorage.clear(); // Clear user data
+    window.location.href = "login.html"; // Redirect to login page
+}
+
+// ✅ Attach logout event to a button
+document.getElementById("logoutBtn")?.addEventListener("click", logout);
+
 const mobileScreen = window.matchMedia("(max-width: 990px )");
 $(document).ready(function () {
     $(".dashboard-nav-dropdown-toggle").click(function () {
@@ -17,17 +104,3 @@ $(document).ready(function () {
         }
     });
 });
-
-document.addEventListener("DOMContentLoaded", () => {
-    // ✅ Retrieve userName from localStorage
-    const displayName = localStorage.getItem("userName");
-
-    if (displayName && displayName !== "User") {
-        document.getElementById("displayName").textContent = displayName;
-    } else {
-        console.error("User name not found in localStorage!");
-        document.getElementById("displayName").textContent = "Guest";
-    }
-});
-
-console.log(localStorage.getItem("userName"));

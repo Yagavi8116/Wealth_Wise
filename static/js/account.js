@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 // ✅ Firebase Configuration
@@ -19,22 +19,6 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// ✅ Detect if user is logged in
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const storedFullName = localStorage.getItem("fullName");
-        if (storedFullName) {
-            console.log("Fetching details from localStorage...");
-            displayUserDetailsFromLocalStorage();
-        } else {
-            console.log("Fetching details from Firebase...");
-            await fetchUserDetails(user.uid);
-        }
-    } else {
-        window.location.href = "login.html"; // Redirect if not logged in
-    }
-});
-
 // ✅ Function to fetch user details from Firebase and store in localStorage
 async function fetchUserDetails(uid) {
     const userRef = ref(db, `users/${uid}`);
@@ -43,13 +27,13 @@ async function fetchUserDetails(uid) {
         if (snapshot.exists()) {
             const userData = snapshot.val();
             console.log("Fetched user details from Firebase:", userData);
-            localStorage.setItem("fullName", userData.fullName || "N/A");
-            localStorage.setItem("email", userData.email || "N/A");
-            localStorage.setItem("dob", userData.dob || "N/A");
-            localStorage.setItem("phoneNumber", userData.phoneNumber || "N/A");
-            localStorage.setItem("accountNumber", userData.accountNumber || "N/A");
 
-            displayUserDetailsFromLocalStorage();
+            // Store in localStorage
+            Object.entries(userData).forEach(([key, value]) => {
+                localStorage.setItem(key, value || "N/A");
+            });
+
+            displayUserDetails();
         } else {
             console.warn("User data not found in database.");
         }
@@ -59,60 +43,76 @@ async function fetchUserDetails(uid) {
 }
 
 // ✅ Function to display user details from localStorage
-function displayUserDetailsFromLocalStorage() {
-    document.getElementById("displayName").textContent = localStorage.getItem("fullName") || "User";
-    document.getElementById("fullName").textContent = localStorage.getItem("fullName") || "N/A";
-    document.getElementById("email").textContent = localStorage.getItem("email") || "N/A";
-    document.getElementById("dob").textContent = localStorage.getItem("dob") || "N/A";
-    document.getElementById("phoneNumber").textContent = localStorage.getItem("phoneNumber") || "N/A";
-    document.getElementById("accountNumber").textContent = localStorage.getItem("accountNumber") || "N/A";
-    const fullName = localStorage.getItem("fullName") || "N/A";
-    const email = localStorage.getItem("email") || "N/A";
-    const dob = localStorage.getItem("dob") || "N/A";
-    const phoneNumber = localStorage.getItem("phoneNumber") || "N/A";
-    const accountNumber = localStorage.getItem("accountNumber") || "N/A";
-
-    // ✅ Log the stored user details
-    console.log("Displaying user details from localStorage:", {
-        fullName, email, dob, phoneNumber, accountNumber
+function displayUserDetails() {
+    const elements = ["fullName", "email", "dob", "phoneNumber", "accountNumber"];
+    elements.forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = localStorage.getItem(id) || "N/A";
     });
+
+    // Special case for display name
+    const displayName = document.getElementById("displayName");
+    if (displayName) displayName.textContent = localStorage.getItem("fullName") || "User";
+
+    console.log("User details updated in UI");
 }
 
+// ✅ Detect if user is logged in and fetch details
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("User is logged in:", user.uid);
+        localStorage.clear();
+
+        // Check if details exist in localStorage, else fetch from Firebase
+        if (!localStorage.getItem("fullName")) {
+            console.log("Fetching details from Firebase...");
+            await fetchUserDetails(user.uid);
+        } else {
+            console.log("Fetching details from localStorage...");
+            displayUserDetails();
+        }
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
 // ✅ Tab Switching Logic
-document.getElementById("account-tab").addEventListener("click", () => {
-    document.getElementById("dashboard-content").style.display = "none";
-    document.getElementById("account-content").style.display = "block";
-});
-
-document.getElementById("dashboard-tab").addEventListener("click", () => {
-    document.getElementById("dashboard-content").style.display = "block";
-    document.getElementById("account-content").style.display = "none";
-});
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM fully loaded and parsed."); // Debugging log
+    console.log("DOM fully loaded and parsed.");
 
     const accountTab = document.getElementById("account-tab");
-    if (accountTab) {
-        console.log("Account tab found."); // Debugging log
-        accountTab.addEventListener("click", () => {
-            document.getElementById("dashboard-content").style.display = "none";
-            document.getElementById("account-content").style.display = "block";
-        });
-    } else {
-        console.warn("account-tab not found in the document.");
+    const dashboardTab = document.getElementById("dashboard-tab");
+    const dashboardContent = document.getElementById("dashboard-content");
+    const accountContent = document.getElementById("account-content");
+
+    if (dashboardContent && accountContent) {
+        // ✅ Show Dashboard by default, hide Account
+        dashboardContent.style.display = "block";
+        accountContent.style.display = "none";
     }
 
-    const dashboardTab = document.getElementById("dashboard-tab");
-    if (dashboardTab) {
-        console.log("Dashboard tab found."); // Debugging log
+    if (accountTab && dashboardTab) {
+        accountTab.addEventListener("click", () => {
+            console.log("Account tab clicked.");
+            dashboardContent.style.display = "none";
+            accountContent.style.display = "block";
+            displayUserDetails(); // ✅ Ensure data is refreshed
+        });
+
         dashboardTab.addEventListener("click", () => {
-            document.getElementById("dashboard-content").style.display = "block";
-            document.getElementById("account-content").style.display = "none";
+            console.log("Dashboard tab clicked.");
+            dashboardContent.style.display = "block";
+            accountContent.style.display = "none";
         });
     } else {
-        console.warn("dashboard-tab not found in the document.");
-    } 
+        console.warn("Tab elements not found.");
+    }
+
+    // ✅ Ensure Account Details are displayed when on account.html
+    if (window.location.href.includes("account.html")) {
+        console.log("Account page detected, displaying details...");
+        dashboardContent.style.display = "none";
+        accountContent.style.display = "block";
+        displayUserDetails(); // Fetch and show user data
+    }
 });
