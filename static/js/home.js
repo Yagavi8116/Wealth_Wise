@@ -17,3 +17,17 @@ $(document).ready(function () {
         }
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // ✅ Retrieve userName from localStorage
+    const displayName = localStorage.getItem("userName");
+
+    if (displayName && displayName !== "User") {
+        document.getElementById("displayName").textContent = displayName;
+    } else {
+        console.error("User name not found in localStorage!");
+        document.getElementById("displayName").textContent = "Guest";
+    }
+});
+
+console.log(localStorage.getItem("userName"));

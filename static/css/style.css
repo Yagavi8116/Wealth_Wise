@@ -648,3 +648,42 @@ display-flex, .display-flex, .display-flex-center, .signup-content, .signin-cont
   from { opacity: 0; transform: translateX(-50%) translateY(20px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+.popup-login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content-login {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+}
+
+.popup-content-login input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+}
+
+.popup-content-login button {
+  background: #4CAF50;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+}
+
+.popup-content-login button:hover {
+  background: #45a049;
+}

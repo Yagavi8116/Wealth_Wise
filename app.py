@@ -38,13 +38,12 @@ def analyze_subscriptions(subscriptions):
     return analysis
 
 @app.route('/')
-def home():
-    return render_template('home.html') 
+def signup():
+    return render_template('signup.html') 
 
-@app.route('/home.html')
-def homeA():
-    return render_template('home.html')
-
+@app.route('/login.html')
+def log():
+    return render_template('login.html')
 @app.route('/goal.html')
 def goal():
     return render_template('goal.html') 
