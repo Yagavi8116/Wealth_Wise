@@ -575,4 +575,31 @@ h1, .h1 {
     -webkit-text-fill-color: rgb(255, 255, 255);
   }
 
-  
+  .dashboard-nav-item {
+    position: relative;
+    text-decoration: none;
+    padding-bottom: 10px; /* Adjust padding for better spacing */
+    transition: color 0.3s ease-in-out;
+}
+
+.dashboard-nav-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px; /* Adjust position */
+    width: 0;
+    height: 6px; /* Increased underline thickness */
+    background-color: #67065f; /* Underline color */
+    border-radius: 5px;
+    transition: width 0.3s ease-in-out;
+}
+
+.dashboard-nav-item:hover::after,
+.dashboard-nav-item.active::after {
+    width: 100%; /* Full-width underline */
+}
+
+.dashboard-nav-item:hover,
+.dashboard-nav-item.active {
+    font-weight: bold; /* Optional: Make selected text bold */
+}
