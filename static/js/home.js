@@ -1,6 +1,6 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+// import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+// import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+// import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 // ✅ Firebase Configuration
 const firebaseConfig = {
@@ -14,16 +14,16 @@ const firebaseConfig = {
     databaseURL: "https://wealthwise-3478b-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
-// ✅ Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
 
 // ✅ Function to fetch user details from Firebase and store in localStorage
 async function fetchUserDetails(uid) {
-    const userRef = ref(db, `users/${uid}`);
+    const userRef = db.ref(`users/${uid}`);
     try {
-        const snapshot = await get(userRef);
+        const snapshot = await userRef.once("value");
         if (snapshot.exists()) {
             const userData = snapshot.val();
             console.log("Fetched user details from Firebase:", userData);
@@ -49,7 +49,7 @@ function displayUserName() {
 }
 
 // ✅ Detect if user is logged in and fetch details
-onAuthStateChanged(auth, async (user) => {
+auth.onAuthStateChanged(async (user) => {
     if (user) {
         console.log("User is logged in:", user.uid);
 
