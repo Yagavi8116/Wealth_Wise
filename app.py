@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 genai.configure(api_key="AIzaSyAFzVK4fpeQgILVWHeWt2a08fpRfvFF0fI") 
 
-model = genai.GenerativeModel(model_name='gemini-pro')  
+model = genai.GenerativeModel("models/gemini-1.5-pro")  
 
 def calculate_financial_score(spending, savings, debt, investments):
     prompt = (
@@ -98,4 +98,3 @@ def analyze_subscriptions():
 
 if __name__ == '__main__':
     app.run(debug=False)
-

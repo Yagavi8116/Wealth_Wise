@@ -145,6 +145,41 @@
                                         border-radius: 3px;
                                     "></div>
                                 </div>
+                                <!-- Info icon -->
+                                <div class="text-center mt-2">
+                                    <i id="info-icon" class="fas fa-info-circle text-white" style="cursor: pointer; font-size: 24px;"></i>
+                                </div>
+
+                                <!-- Hidden table -->
+                                <div id="score-info-table" class="text-center mt-3 bg-dark text-white p-3 rounded" style="display: none; width: 50%; margin: auto;">
+                                    <h4>Financial Health Score Interpretation</h4>
+                                    <table class="table table-bordered table-dark">
+                                        <thead>
+                                            <tr>
+                                                <th>Score Range</th>
+                                                <th>Interpretation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>0 - 25</td>
+                                                <td>Needs Attention</td>
+                                            </tr>
+                                            <tr>
+                                                <td>26 - 50</td>
+                                                <td>Fair</td>
+                                            </tr>
+                                            <tr>
+                                                <td>51 - 75</td>
+                                                <td>Good</td>
+                                            </tr>
+                                            <tr>
+                                                <td>76 - 100</td>
+                                                <td>Excellent</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>                            
                         </div>                                                
                     </div>
@@ -339,6 +374,10 @@
                 }
             })
             .catch(error => console.error("Error:", error));
+        });
+        document.getElementById("info-icon").addEventListener("click", function () {
+            const infoTable = document.getElementById("score-info-table");
+            infoTable.style.display = infoTable.style.display === "none" ? "block" : "none";
         });
     </script>
 </body>
