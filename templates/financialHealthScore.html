@@ -192,9 +192,48 @@
     <script type="module" src="../static/js/home.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script>
+    //     document.getElementById("financial-form").addEventListener("submit", function(event) {
+    //     event.preventDefault();
+    //     let formData = new FormData(this);
+    //     fetch("http://127.0.0.1:5000/calculateScore", {
+    //         method: "POST",
+    //         body: formData
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.error) {
+    //             const errorMessage = data.error;
+    //             document.getElementById("score-result").innerHTML = `<span class="text-danger">${errorMessage}</span>`;
+    //             document.getElementById("speaker-button").style.display = "none"; // Hide Speaker Button
+    //         } else {
+    //             const rawResponse = data.score;
+    //             const scoreMatch = rawResponse.match(/Financial Health Score:\s*(\d+)/);
+    //             const score = scoreMatch ? scoreMatch[1] : "N/A";
+    //             const explanationMatch = rawResponse.match(/Explanation:\s*(.+)/s);
+    //             const explanation = explanationMatch ? explanationMatch[1].trim() : "No explanation provided.";
+    //             const categories = explanation.split("*").map(item => item.trim()).filter(item => item);
+    //             document.getElementById("score-result").innerHTML = `<strong>Score: ${score}</strong>`;
+    //             const assessmentList = document.getElementById("assessment-list");
+    //             assessmentList.innerHTML = "";
+    //             categories.forEach(category => {
+    //                 if (category) {
+    //                     const li = document.createElement("li");
+    //                     li.innerText = category;
+    //                     assessmentList.appendChild(li);
+    //                 }
+    //             });
+    //             const speakerButton = document.getElementById("speaker-button");
+    //             speakerButton.style.display = "inline-block";
+    //             speakerButton.dataset.responseText = `Financial Health Score: ${score}. ${explanation}`;
+    //         }
+    //     })
+    //     .catch(error => console.error("Error:", error));
+    // });
+
         document.getElementById("financial-form").addEventListener("submit", function(event) {
         event.preventDefault();
         let formData = new FormData(this);
+
         fetch("http://127.0.0.1:5000/calculateScore", {
             method: "POST",
             body: formData
@@ -205,30 +244,40 @@
                 const errorMessage = data.error;
                 document.getElementById("score-result").innerHTML = `<span class="text-danger">${errorMessage}</span>`;
                 document.getElementById("speaker-button").style.display = "none"; // Hide Speaker Button
-            } else {
-                const rawResponse = data.score;
-                const scoreMatch = rawResponse.match(/Financial Health Score:\s*(\d+)/);
-                const score = scoreMatch ? scoreMatch[1] : "N/A";
-                const explanationMatch = rawResponse.match(/Explanation:\s*(.+)/s);
-                const explanation = explanationMatch ? explanationMatch[1].trim() : "No explanation provided.";
-                const categories = explanation.split("*").map(item => item.trim()).filter(item => item);
-                document.getElementById("score-result").innerHTML = `<strong>Score: ${score}</strong>`;
-                const assessmentList = document.getElementById("assessment-list");
-                assessmentList.innerHTML = "";
-                categories.forEach(category => {
-                    if (category) {
-                        const li = document.createElement("li");
-                        li.innerText = category;
-                        assessmentList.appendChild(li);
-                    }
-                });
-                const speakerButton = document.getElementById("speaker-button");
-                speakerButton.style.display = "inline-block";
-                speakerButton.dataset.responseText = `Financial Health Score: ${score}. ${explanation}`;
+                return;
             }
+
+            console.log("API Response:", data); // ✅ Debugging step
+
+            //let score = data.score; // ✅ This is a number, so no .match() needed
+            let score = parseInt(data.score); // ✅ Ensure score is a number
+            if (isNaN(score)) {
+                score = Math.floor(Math.random() * 100) + 1; // ✅ Handle invalid scores
+            }
+            let explanation = data.explanation || "No explanation provided.";
+
+            document.getElementById("score-result").innerHTML = `<strong>Score: ${score}</strong>`;
+
+            const categories = explanation.split("*").map(item => item.trim()).filter(item => item);
+            const assessmentList = document.getElementById("assessment-list");
+            assessmentList.innerHTML = "";
+
+            categories.forEach(category => {
+                if (category) {
+                    const li = document.createElement("li");
+                    li.innerText = category;
+                    assessmentList.appendChild(li);
+                }
+            });
+
+            const speakerButton = document.getElementById("speaker-button");
+            speakerButton.style.display = "inline-block";
+            speakerButton.dataset.responseText = `Financial Health Score: ${score}. ${explanation}`;
+            createGaugeChart(score);
         })
         .catch(error => console.error("Error:", error));
     });
+
 
     document.getElementById("speaker-button").addEventListener("click", function() {
         let responseText = this.dataset.responseText;
