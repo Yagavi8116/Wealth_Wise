@@ -41,11 +41,33 @@ async function fetchUserDetails(uid) {
 }
 
 // ✅ Function to display user name from localStorage
+// function displayUserName() {
+//     const displayNameElement = document.getElementById("displayName");
+//     if (displayNameElement) {
+//         displayNameElement.textContent = localStorage.getItem("userName") || "Guest";
+//     }
+// }
 function displayUserName() {
     const displayNameElement = document.getElementById("displayName");
+    const userName = localStorage.getItem("userName");
+
     if (displayNameElement) {
-        displayNameElement.textContent = localStorage.getItem("userName") || "Guest";
+        if (userName) {
+            displayNameElement.textContent = userName; // Display username
+        } else {
+            //alert("Session timed out! Please log in again.");
+            showSessionTimeoutModal();
+            setTimeout(() => {
+                window.location.href = "login.html"; // Redirect to login
+            }, 10000);// Redirect to login
+        }
     }
+}
+
+// ✅ Show Bootstrap session timeout modal
+function showSessionTimeoutModal() {
+    const sessionModal = new bootstrap.Modal(document.getElementById("sessionTimeoutModal"));
+    sessionModal.show();
 }
 
 // ✅ Detect if user is logged in and fetch details
@@ -62,6 +84,7 @@ auth.onAuthStateChanged(async (user) => {
             displayUserName();
         }
     } else {
+        alert("Session expired! Please log in again.");
         window.location.href = "login.html";
     }
 });
@@ -103,4 +126,23 @@ $(document).ready(function () {
             $(".dashboard").toggleClass("dashboard-compact");
         }
     });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const logoutButton = document.getElementById("logoutButton");
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Clear user session from localStorage
+            //localStorage.removeItem("user");
+
+            // Optional: Clear all localStorage (if needed)
+             localStorage.clear();
+
+            // Redirect to login page
+            window.location.href = "/login.html";
+        });
+    }
 });
