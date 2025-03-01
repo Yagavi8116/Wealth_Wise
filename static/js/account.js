@@ -61,7 +61,7 @@ function displayUserDetails() {
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         console.log("User is logged in:", user.uid);
-        localStorage.clear();
+        //localStorage.clear();
 
         // Check if details exist in localStorage, else fetch from Firebase
         if (!localStorage.getItem("fullName")) {
