@@ -146,3 +146,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const redirectToLoginBtn = document.getElementById("redirectToLogin");
+    if (redirectToLoginBtn) {
+        redirectToLoginBtn.addEventListener("click", function () {
+            window.location.href = "login.html"; // Redirect to login page
+        });
+    }
+});
