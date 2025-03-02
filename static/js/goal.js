@@ -52,10 +52,12 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
+let completedGoals = [];
 function renderGoals(userGoalsRef) {
     userGoalsRef.on("value", (snapshot) => {
         const goalList = document.getElementById("goalList");
         goalList.innerHTML = "";
+        completedGoals = [];
         let goals = snapshot.val() || {};
         let goalArray = Object.entries(goals);
 
@@ -67,6 +69,10 @@ function renderGoals(userGoalsRef) {
         goalArray.forEach(([goalId, goal]) => {
             let progress = (goal.saved / goal.amount) * 100;
             let balance = goal.amount - goal.saved;
+
+            if (progress >= 100) {
+                completedGoals.push({ id: goalId, ...goal });
+            }
 
             let goalCard = `
                 <div class="card p-3 mt-2">
@@ -152,5 +158,55 @@ function showGoalReachedPopup(amount) {
 function showExceedLimitPopup(amount) {
     document.getElementById("exceedLimitAmount").innerText = amount;
     let modalInstance = new bootstrap.Modal(document.getElementById("exceedLimitModal"), { keyboard: true });
+    modalInstance.show();
+}
+
+function showCompletedGoalsPopup(completedGoals) {
+    const completedGoalsList = document.getElementById("completedGoalsList");
+    completedGoalsList.innerHTML = "";
+
+    completedGoals.forEach(goal => {
+        let goalItem = `
+            <div class="card p-2 mb-2">
+                <h6>${goal.name}</h6>
+                <p>Target: ₹${goal.amount} | Deadline: ${goal.deadline}</p>
+                <button class="btn btn-danger btn-sm" onclick="deleteGoal('${goal.id}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        `;
+        completedGoalsList.innerHTML += goalItem;
+    });
+
+    let modalInstance = new bootstrap.Modal(document.getElementById("completedGoalsModal"), { keyboard: true });
+    modalInstance.show();
+}
+
+document.getElementById("viewHistoryBtn").addEventListener("click", () => {
+    showCompletedGoalsPopup();
+});
+
+function showCompletedGoalsPopup() {
+    const completedGoalsList = document.getElementById("completedGoalsList");
+    completedGoalsList.innerHTML = "";
+
+    if (completedGoals.length === 0) {
+        completedGoalsList.innerHTML = `<p style="color: white">No completed goals yet.</p>`;
+    } else {
+        completedGoals.forEach(goal => {
+            let goalItem = `
+                <div class="card p-2 mb-2">
+                    <h6 style="color: white">${goal.name}</h6>
+                    <p style="color: white">Target: ₹${goal.amount} | Deadline: ${goal.deadline}</p>
+                    <button class="btn btn-danger btn-sm" onclick="deleteGoal('${goal.id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            completedGoalsList.innerHTML += goalItem;
+        });
+    }
+
+    let modalInstance = new bootstrap.Modal(document.getElementById("completedGoalsModal"), { keyboard: true });
     modalInstance.show();
 }
