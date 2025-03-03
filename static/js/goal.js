@@ -53,6 +53,7 @@ auth.onAuthStateChanged((user) => {
 });
 
 let completedGoals = [];
+
 function renderGoals(userGoalsRef) {
     userGoalsRef.on("value", (snapshot) => {
         const goalList = document.getElementById("goalList");
@@ -74,6 +75,16 @@ function renderGoals(userGoalsRef) {
                 completedGoals.push({ id: goalId, ...goal });
             }
 
+            // Remove both "Add Savings" and "Delete" buttons if the goal is complete
+            let actionButtons = progress < 100 
+                ? `<button type="submit" class="btn btn-primary fw-bold" onclick="openAddSavingsModal('${goalId}')">
+                        <i class="fas fa-plus"></i> Add Savings
+                   </button>
+                   <button type="button" class="btn btn-danger fw-bold" onclick="deleteGoal('${goalId}')">
+                        <i class="fas fa-trash"></i> Delete
+                   </button>` 
+                : ""; // Hide both buttons if progress is 100%
+
             let goalCard = `
                 <div class="card p-3 mt-2">
                     <h5 style="color: white; font-weight: bold;">${goal.name}</h5>
@@ -85,12 +96,7 @@ function renderGoals(userGoalsRef) {
                         </div>
                     </div>
                     <div class="d-flex justify-content-between mt-3">
-                        <button type="submit" class="btn btn-primary fw-bold" onclick="openAddSavingsModal('${goalId}')">
-                            <i class="fas fa-plus"></i> Add Savings
-                        </button>
-                        <button type="button" class="btn btn-danger fw-bold" onclick="deleteGoal('${goalId}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
+                        ${actionButtons} 
                     </div>
                 </div>
             `;
@@ -98,6 +104,7 @@ function renderGoals(userGoalsRef) {
         });
     });
 }
+
 
 function openAddSavingsModal(goalId) {
     document.getElementById("confirmAddSavings").setAttribute("data-goal-id", goalId);
