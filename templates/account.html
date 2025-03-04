@@ -106,6 +106,98 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <div class="financial-details card shadow p-4 border border-dark rounded">
+                                        <h2 class="text-center mb-4">📊 Monthly Financial Details</h2>
+                                        
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-white">
+                                                <thead>
+                                                    <tr class="bg-dark text-white">
+                                                        <th>Month</th>
+                                                        <th>Income</th>
+                                                        <th>Savings</th>
+                                                        <th>Expenses</th>
+                                                        <th>Debt</th>
+                                                        <th>Investment</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <select id="month" class="form-select">
+                                                                <option value="Jan">Jan</option>
+                                                                <option value="Feb">Feb</option>
+                                                                <option value="Mar">Mar</option>
+                                                                <option value="Apr">Apr</option>
+                                                                <option value="May">May</option>
+                                                                <option value="Jun">Jun</option>
+                                                                <option value="Jul">Jul</option>
+                                                                <option value="Aug">Aug</option>
+                                                                <option value="Sep">Sep</option>
+                                                                <option value="Oct">Oct</option>
+                                                                <option value="Nov">Nov</option>
+                                                                <option value="Dec">Dec</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                                <input type="number" id="income" class="form-control" placeholder="Enter income">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text"><i class="fas fa-piggy-bank"></i></span>
+                                                                <input type="number" id="savings" class="form-control" placeholder="Enter savings">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                                                                <input type="number" id="expenses" class="form-control" placeholder="Enter expenses">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text"><i class="fas fa-hand-holding-usd"></i></span>
+                                                                <input type="number" id="debt" class="form-control" placeholder="Enter debt">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text"><i class="fas fa-chart-line"></i></span>
+                                                                <input type="number" id="investment" class="form-control" placeholder="Enter investment">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div class="text-center">
+                                            <button id="saveFinancialData" class="btn btn-success">
+                                                <i class="fas fa-save"></i> Save
+                                            </button>
+                                        </div>
+                                    
+                                        <h3 class="text-center mt-4">📄 Financial Records</h3>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-white">
+                                                <thead>
+                                                    <tr class="bg-dark text-white">
+                                                        <th>#</th>
+                                                        <th>Month</th>
+                                                        <th>Income</th>
+                                                        <th>Savings</th>
+                                                        <th>Expenses</th>
+                                                        <th>Debt</th>
+                                                        <th>Investment</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="financialDataTable"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>                                    
                                 </div>
                             </div>
                         </div>
