@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+//import { getDatabase, ref, get, push, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCHkdMeDrEVGtMIJ6_x8hlxyIaO87RAqsk",
@@ -94,3 +95,60 @@ document.addEventListener("DOMContentLoaded", () => {
         displayUserDetails(); 
     }
 });
+
+// Function to save financial details
+document.getElementById("saveFinancialData").addEventListener("click", async () => {
+    const user = auth.currentUser;
+    if (!user) return alert("User not authenticated");
+
+    const year = document.getElementById("year").value;
+    const month = document.getElementById("month").value;
+    const income = document.getElementById("income").value.trim();
+    const savings = document.getElementById("savings").value.trim();
+    const expenses = document.getElementById("expenses").value.trim();
+    const debt = document.getElementById("debt").value.trim();
+    const investment = document.getElementById("investment").value.trim();
+
+    // Validate inputs
+    if (!year || !month || !income || !savings || !expenses || !debt || !investment) {
+        return alert("Please fill all fields");
+    }
+
+    const userRef = ref(db, `users/${user.uid}/Account_Details`);
+    const newEntryRef = push(userRef);
+
+    set(newEntryRef, {
+        year, month, income, savings, expenses, debt, investment
+    }).then(() => {
+        alert("Data saved successfully");
+        loadFinancialData(); // Refresh displayed data
+    }).catch(error => console.error("Error saving data:", error));
+});
+
+// Function to load financial details
+function loadFinancialData() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const userRef = ref(db, `users/${user.uid}/Account_Details`);
+    onValue(userRef, (snapshot) => {
+        const dataTable = document.getElementById("financialDataTable");
+        dataTable.innerHTML = ""; // Clear table before inserting new data
+        let index = 1;
+
+        snapshot.forEach((childSnapshot) => {
+            const data = childSnapshot.val();
+            const row = `<tr>
+                            <td>${index++}</td>
+                            <td>${data.year}</td>
+                            <td>${data.month}</td>
+                            <td>${data.income}</td>
+                            <td>${data.savings}</td>
+                            <td>${data.expenses}</td>
+                            <td>${data.debt}</td>
+                            <td>${data.investment}</td>
+                        </tr>`;
+            dataTable.innerHTML += row;
+        });
+    });
+}
