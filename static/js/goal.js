@@ -148,13 +148,46 @@ document.getElementById("confirmAddSavings").addEventListener("click", () => {
     });
 });
 
+// function deleteGoal(goalId) {
+//     const user = firebase.auth().currentUser;
+//     const userGoalsRef = db.ref(`users/${user.uid}/goals`);
+//     userGoalsRef.child(goalId).remove()
+//         .then(() => console.log("Goal deleted successfully!"))
+//         .catch(error => console.error("Error deleting goal:", error));
+// }
+
+// function deleteGoal(goalId) {
+//     const user = firebase.auth().currentUser;
+//     const userGoalsRef = db.ref(`users/${user.uid}/goals`);
+//     userGoalsRef.child(goalId).remove()
+//         .then(() => {
+//             console.log("Goal deleted successfully!");
+//             completedGoals = completedGoals.filter(goal => goal.id !== goalId);
+//             showCompletedGoalsPopup();
+//         })
+//         .catch(error => console.error("Error deleting goal:", error));
+// }
 function deleteGoal(goalId) {
     const user = firebase.auth().currentUser;
     const userGoalsRef = db.ref(`users/${user.uid}/goals`);
+
     userGoalsRef.child(goalId).remove()
-        .then(() => console.log("Goal deleted successfully!"))
+        .then(() => {
+            console.log("Goal deleted successfully!");
+            completedGoals = completedGoals.filter(goal => goal.id !== goalId);
+
+            // ✅ Close and refresh the popup to avoid stale UI state
+            let modalElement = document.getElementById("completedGoalsModal");
+            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+
+            setTimeout(() => showCompletedGoalsPopup(), 300); // ✅ Delay re-opening to allow UI update
+        })
         .catch(error => console.error("Error deleting goal:", error));
 }
+
 
 function showGoalReachedPopup(amount) {
     document.getElementById("goalReachedAmount").innerText = amount;
@@ -193,6 +226,39 @@ document.getElementById("viewHistoryBtn").addEventListener("click", () => {
     showCompletedGoalsPopup();
 });
 
+// function showCompletedGoalsPopup() {
+//     const completedGoalsList = document.getElementById("completedGoalsList");
+//     completedGoalsList.innerHTML = "";
+
+//     if (completedGoals.length === 0) {
+//         completedGoalsList.innerHTML = `<p style="color: white">No completed goals yet.</p>`;
+//     } else {
+//         completedGoals.forEach(goal => {
+//             let goalItem = `
+//                 <div class="card p-2 mb-2">
+//                     <h6 style="color: white">${goal.name}</h6>
+//                     <p style="color: white">Target: ₹${goal.amount} | Deadline: ${goal.deadline}</p>
+//                     <button class="btn btn-danger btn-sm" onclick="deleteGoal('${goal.id}')">
+//                         <i class="fas fa-trash"></i> Delete
+//                     </button>
+//                 </div>
+//             `;
+//             completedGoalsList.innerHTML += goalItem;
+//         });
+//     }
+
+
+    // let modalInstance = new bootstrap.Modal(document.getElementById("completedGoalsModal"), { keyboard: true });
+    // modalInstance.show();
+//     let modalElement = document.getElementById("completedGoalsModal");
+//     let modalInstance = new bootstrap.Modal(modalElement, { keyboard: true });
+//     modalElement.addEventListener("hidden.bs.modal", function () {
+//         document.body.classList.remove("modal-open");  
+//         document.querySelectorAll(".modal-backdrop").forEach(backdrop => backdrop.remove());
+//     });
+//     modalInstance.show();
+// }
+
 function showCompletedGoalsPopup() {
     const completedGoalsList = document.getElementById("completedGoalsList");
     completedGoalsList.innerHTML = "";
@@ -214,6 +280,14 @@ function showCompletedGoalsPopup() {
         });
     }
 
-    let modalInstance = new bootstrap.Modal(document.getElementById("completedGoalsModal"), { keyboard: true });
+    let modalElement = document.getElementById("completedGoalsModal");
+    let modalInstance = new bootstrap.Modal(modalElement, { keyboard: true });
+
+    // ✅ Ensure proper cleanup when modal is closed
+    modalElement.addEventListener("hidden.bs.modal", function () {
+        document.body.classList.remove("modal-open");
+        document.querySelectorAll(".modal-backdrop").forEach(backdrop => backdrop.remove());
+    });
+
     modalInstance.show();
 }
