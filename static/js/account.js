@@ -188,6 +188,8 @@ function loadFinancialData() {
          const addIndicator = (value, type) => {
             if (type === "positive") {
                 return value ? `🟢 ${value}` : value;
+            } else if(type == "loss"){
+                return value ? `🔻 ${value} `: value;
             } else {
                 return value ? `🔴 ${value}` : value;
             }
@@ -200,12 +202,10 @@ function loadFinancialData() {
                             <td style="background-color: #67065f; color:white">${data.year}</td>
                             <td style="background-color: #67065f; color:white">${data.month}</td>
                             <td style="background-color: #67065f; color:white">${addIndicator(data.income, "positive")}</td>
-                            <td style="background-color: #67065f; color:white">${addIndicator(data.income, "positive")
-                                
-                            }</td>
-                            <td style="background-color: #67065f; color:white">${data.expenses}</td>
-                            <td style="background-color: #67065f; color:white">${data.debt}</td>
-                            <td style="background-color: #67065f; color:white">${data.investment}</td>
+                            <td style="background-color: #67065f; color:white">${addIndicator(data.savings, "positive")}</td>
+                            <td style="background-color: #67065f; color:white">${addIndicator(data.expenses, "negative")}</td>
+                            <td style="background-color: #67065f; color:white">${addIndicator(data.debt, "loss")}</td>
+                            <td style="background-color: #67065f; color:white">${addIndicator(data.investment, "positive")}</td>
                         </tr>`;
             dataTable.innerHTML += row;
         });
