@@ -187,14 +187,14 @@ function loadFinancialData() {
         // Append sorted data to table
         records.forEach((data, index) => {
             const row = `<tr>
-                            <td>${index + 1}</td>
-                            <td>${data.year}</td>
-                            <td>${data.month}</td>
-                            <td>${data.income}</td>
-                            <td>${data.savings}</td>
-                            <td>${data.expenses}</td>
-                            <td>${data.debt}</td>
-                            <td>${data.investment}</td>
+                            <td style="background-color: #67065f; color:white">${index + 1}</td>
+                            <td style="background-color: #67065f; color:white">${data.year}</td>
+                            <td style="background-color: #67065f; color:white">${data.month}</td>
+                            <td style="background-color: #67065f; color:white">${data.income}</td>
+                            <td style="background-color: #67065f; color:white">${data.savings}</td>
+                            <td style="background-color: #67065f; color:white">${data.expenses}</td>
+                            <td style="background-color: #67065f; color:white">${data.debt}</td>
+                            <td style="background-color: #67065f; color:white">${data.investment}</td>
                         </tr>`;
             dataTable.innerHTML += row;
         });

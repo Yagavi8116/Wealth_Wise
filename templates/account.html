@@ -13,19 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database-compat.js"></script>
-    <style>
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-        .table th:first-child, .table td:first-child {
-            width: 50px; /* Adjust width for serial number */
-        }
-        .table th, .table td {
-            padding: 8px;
-        }
-    </style>
-    
+    <link rel="stylesheet" href="../static/css/account.css">    
 </head>
 <body>
     <div class='dashboard'>
@@ -127,13 +115,13 @@
                                                 <table class="table table-bordered text-white">
                                                     <thead>
                                                         <tr class="bg-dark text-white text-center">
-                                                            <th>Year</th>
-                                                            <th>Month</th>
-                                                            <th>Income</th>
-                                                            <th>Savings</th>
-                                                            <th>Expenses</th>
-                                                            <th>Debt</th>
-                                                            <th>Investment</th>
+                                                            <th style="background-color: #67065f; color:white">Year</th>
+                                                            <th style="background-color: #67065f; color:white">Month</th>
+                                                            <th style="background-color: #67065f; color:white">Income</th>
+                                                            <th style="background-color: #67065f; color:white">Savings</th>
+                                                            <th style="background-color: #67065f; color:white">Expenses</th>
+                                                            <th style="background-color: #67065f; color:white">Debt</th>
+                                                            <th style="background-color: #67065f; color:white">Investment</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -207,14 +195,14 @@
                                                 <table class="table table-bordered text-white">
                                                     <thead>
                                                         <tr class="bg-dark text-white text-center">
-                                                            <th>#</th>
-                                                            <th>Year</th>
-                                                            <th>Month</th>
-                                                            <th>Income</th>
-                                                            <th>Savings</th>
-                                                            <th>Expenses</th>
-                                                            <th>Debt</th>
-                                                            <th>Investment</th>
+                                                            <th style="background-color: #67065f; color:white">#</th>
+                                                            <th style="background-color: #67065f; color:white">Year</th>
+                                                            <th style="background-color: #67065f; color:white">Month</th>
+                                                            <th style="background-color: #67065f; color:white">Income</th>
+                                                            <th style="background-color: #67065f; color:white">Savings</th>
+                                                            <th style="background-color: #67065f; color:white">Expenses</th>
+                                                            <th style="background-color: #67065f; color:white">Debt</th>
+                                                            <th style="background-color: #67065f; color:white">Investment</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="financialDataTable"></tbody>
