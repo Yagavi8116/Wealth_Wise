@@ -184,14 +184,25 @@ function loadFinancialData() {
             return monthOrder[a.month] - monthOrder[b.month]; // Sort by month (newest first)
         });
 
+         // Function to add emoji based on financial impact
+         const addIndicator = (value, type) => {
+            if (type === "positive") {
+                return value ? `🟢 ${value}` : value;
+            } else {
+                return value ? `🔴 ${value}` : value;
+            }
+        };
+
         // Append sorted data to table
         records.forEach((data, index) => {
             const row = `<tr>
                             <td style="background-color: #67065f; color:white">${index + 1}</td>
                             <td style="background-color: #67065f; color:white">${data.year}</td>
                             <td style="background-color: #67065f; color:white">${data.month}</td>
-                            <td style="background-color: #67065f; color:white">${data.income}</td>
-                            <td style="background-color: #67065f; color:white">${data.savings}</td>
+                            <td style="background-color: #67065f; color:white">${addIndicator(data.income, "positive")}</td>
+                            <td style="background-color: #67065f; color:white">${addIndicator(data.income, "positive")
+                                
+                            }</td>
                             <td style="background-color: #67065f; color:white">${data.expenses}</td>
                             <td style="background-color: #67065f; color:white">${data.debt}</td>
                             <td style="background-color: #67065f; color:white">${data.investment}</td>

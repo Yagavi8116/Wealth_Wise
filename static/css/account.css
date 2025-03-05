@@ -57,3 +57,16 @@ body {
 .table th, .table td {
     padding: 8px;
 }
+
+::placeholder {
+    color: white !important;
+    opacity: 1 !important; /* Ensure the color is fully visible */
+}
+
+:-ms-input-placeholder { /* For Internet Explorer */
+    color: white !important;
+}
+
+::-ms-input-placeholder { /* For Edge */
+    color: white !important;
+}
