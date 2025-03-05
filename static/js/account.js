@@ -58,6 +58,7 @@ onAuthStateChanged(auth, async (user) => {
             console.log("Fetching details from localStorage...");
             displayUserDetails();
         }
+        loadFinancialData();
     } else {
         window.location.href = "login.html";
     }
@@ -126,20 +127,67 @@ document.getElementById("saveFinancialData").addEventListener("click", async () 
 });
 
 // Function to load financial details
+// function loadFinancialData() {
+//     const user = auth.currentUser;
+//     if (!user) return;
+
+//     const userRef = ref(db, `users/${user.uid}/Account_Details`);
+//     onValue(userRef, (snapshot) => {
+//         const dataTable = document.getElementById("financialDataTable");
+//         dataTable.innerHTML = ""; // Clear table before inserting new data
+//         let index = 1;
+
+//         snapshot.forEach((childSnapshot) => {
+//             const data = childSnapshot.val();
+//             const row = `<tr>
+//                             <td>${index++}</td>
+//                             <td>${data.year}</td>
+//                             <td>${data.month}</td>
+//                             <td>${data.income}</td>
+//                             <td>${data.savings}</td>
+//                             <td>${data.expenses}</td>
+//                             <td>${data.debt}</td>
+//                             <td>${data.investment}</td>
+//                         </tr>`;
+//             dataTable.innerHTML += row;
+//         });
+//     });
+// }
+
 function loadFinancialData() {
     const user = auth.currentUser;
     if (!user) return;
 
     const userRef = ref(db, `users/${user.uid}/Account_Details`);
-    onValue(userRef, (snapshot) => {
+    get(userRef).then((snapshot) => {
+        if (!snapshot.exists()) {
+            console.log("No financial data found.");
+            return;
+        }
+
         const dataTable = document.getElementById("financialDataTable");
         dataTable.innerHTML = ""; // Clear table before inserting new data
-        let index = 1;
+        let records = [];
 
         snapshot.forEach((childSnapshot) => {
-            const data = childSnapshot.val();
+            records.push(childSnapshot.val());
+        });
+
+        // Sort by Year (descending), then by Month (Jan-Dec order)
+        const monthOrder = {
+            "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+            "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+        };
+
+        records.sort((a, b) => {
+            if (a.year !== b.year) return a.year - b.year; // Sort by year (newest first)
+            return monthOrder[a.month] - monthOrder[b.month]; // Sort by month (newest first)
+        });
+
+        // Append sorted data to table
+        records.forEach((data, index) => {
             const row = `<tr>
-                            <td>${index++}</td>
+                            <td>${index + 1}</td>
                             <td>${data.year}</td>
                             <td>${data.month}</td>
                             <td>${data.income}</td>
@@ -150,5 +198,7 @@ function loadFinancialData() {
                         </tr>`;
             dataTable.innerHTML += row;
         });
-    });
+
+        console.log("Financial data loaded and sorted.");
+    }).catch(error => console.error("Error loading financial data:", error));
 }
