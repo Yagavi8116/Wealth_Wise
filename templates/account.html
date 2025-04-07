@@ -14,6 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="../static/css/account.css">    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class='dashboard'>
@@ -44,9 +45,9 @@
                 <a href="./smartSubscription.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-clipboard-list" style="color:white"></i> Smart Subscription Tracker
                 </a>
-                <a href="./family.html" class="dashboard-nav-item" style=" color:white">
+                <!-- <a href="./family.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-users" style="color:white"></i> Family Finance Dashboard
-                </a>
+                </a> -->
                 <a href="./visualize.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-chart-pie" style="color:white"></i> Expense Visualizer
                 </a>
@@ -215,6 +216,9 @@
                                                     </thead>
                                                     <tbody id="financialDataTable"></tbody>
                                                 </table>
+                                                <button id="printPDF" style="margin-top: 10px; background-color: #67065f; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">
+                                                    🖨️ Print Statement
+                                                </button>                                                
                                             </div>
                                         </div>
                                     </div>                                                                                                            

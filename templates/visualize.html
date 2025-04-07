@@ -14,6 +14,20 @@
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #financeChart {
+        background-color: white;
+        border-radius: 10px;
+        padding: 1rem;
+        }
+        .container {
+        background-color: #1e1e1e;
+        padding: 20px;
+        border-radius: 12px;
+        }
+
+    </style>
 </head>
 <body>
     <div class='dashboard'>
@@ -44,9 +58,9 @@
                 <a href="./smartSubscription.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-clipboard-list" style="color:white"></i> Smart Subscription Tracker
                 </a>
-                <a href="./family.html" class="dashboard-nav-item" style=" color:white">
+                <!-- <a href="./family.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-users" style="color:white"></i> Family Finance Dashboard
-                </a>
+                </a> -->
                 <a href="./visualize.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-chart-pie" style="color:white"></i> Expense Visualizer
                 </a>
@@ -73,7 +87,8 @@
                     <div class="container-box">                            
                         <div class="section">	
                             <div class="container">
-                                <h1 style="color: white;">Yet to Implement !</h1>
+                                <h1 style="color: white;">Expense Visualizer !</h1>
+                                <canvas id="financeChart" width="800" height="400"></canvas>
                             </div>
                         </div>
                     </div>
@@ -98,9 +113,204 @@
             </div>
         </div>
     </div>
-<script type="module" src="../static/js/account.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script type="module" src="../static/js/home.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Firebase config (use your actual config here)
+const firebaseConfig = {
+    apiKey: "AIzaSyCHkdMeDrEVGtMIJ6_x8hlxyIaO87RAqsk",
+    authDomain: "wealthwise-3478b.firebaseapp.com",
+    projectId: "wealthwise-3478b",
+    storageBucket: "wealthwise-3478b.appspot.com",
+    messagingSenderId: "855679488886",
+    appId: "1:855679488886:web:3faa36dd9f9cbceabba057",
+    measurementId: "G-THF8SY4BZ2",
+    databaseURL: "https://wealthwise-3478b-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Get user ID from localStorage
+const userId = localStorage.getItem('userID'); // Make sure this is stored during login
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    console.log("User is logged in:", user.uid);
+    localStorage.setItem("userID", user.uid); // ✅ Save UID
+  } else {
+    console.log("User is not logged in");
+  }
+});
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    const userId = user.uid;
+    const accountDetailsRef = firebase.database().ref(`users/${userId}/Account_Details`);
+
+    accountDetailsRef.once("value")
+      .then(snapshot => {
+        // Render chart data
+      })
+      .catch(error => {
+        console.error("Error fetching financial data:", error);
+      });
+  } else {
+    alert("You must be logged in to view financial data.");
+  }
+});
+
+// Reference to Account Details
+const accountDetailsRef = db.ref(`users/${userId}/Account_Details`);
+
+// Fetch data from Firebase
+// accountDetailsRef.once('value')
+//   .then(snapshot => {
+//     const data = snapshot.val();
+//     const months = [];
+//     const income = [], savings = [], expenses = [], investments = [], debt = [];
+
+//     for (let key in data) {
+//       const entry = data[key];
+//       const label = `${entry.month} ${entry.year}`;
+//       months.push(label);
+//       income.push(parseInt(entry.income));
+//       savings.push(parseInt(entry.savings));
+//       expenses.push(parseInt(entry.expenses));
+//       investments.push(parseInt(entry.investment));
+//       debt.push(parseInt(entry.debt));
+//     }
+
+//     createFinanceChart(months, income, savings, expenses, investments, debt);
+//   })
+//   .catch(error => {
+//     console.error("Error fetching data:", error);
+//   });
+accountDetailsRef.once('value')
+  .then(snapshot => {
+    const data = snapshot.val();
+    const entries = [];
+
+    const monthOrder = {
+      'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+      'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+    };
+
+    for (let key in data) {
+      const entry = data[key];
+      if (entry.month && entry.year) {
+        entries.push({
+          label: `${entry.month} ${entry.year}`,
+          month: monthOrder[entry.month],
+          year: parseInt(entry.year),
+          income: parseInt(entry.income),
+          savings: parseInt(entry.savings),
+          expenses: parseInt(entry.expenses),
+          investment: parseInt(entry.investment),
+          debt: parseInt(entry.debt)
+        });
+      }
+    }
+
+    // Sort by year, then by month
+    entries.sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.month - b.month;
+    });
+
+    const months = [], income = [], savings = [], expenses = [], investments = [], debt = [];
+
+    entries.forEach(entry => {
+      months.push(entry.label);
+      income.push(entry.income);
+      savings.push(entry.savings);
+      expenses.push(entry.expenses);
+      investments.push(entry.investment);
+      debt.push(entry.debt);
+    });
+
+    createFinanceChart(months, income, savings, expenses, investments, debt);
+  })
+  .catch(error => {
+    console.error("Error fetching data:", error);
+  });
+
+// Function to create chart
+function createFinanceChart(labels, income, savings, expenses, investments, debt) {
+  const ctx = document.getElementById('financeChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Income',
+          data: income,
+          borderColor: 'green',
+          backgroundColor: 'rgba(0, 128, 0, 0.1)',
+          fill: true
+        },
+        {
+          label: 'Savings',
+          data: savings,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(0, 0, 255, 0.1)',
+          fill: true
+        },
+        {
+          label: 'Expenses',
+          data: expenses,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 0, 0, 0.1)',
+          fill: true
+        },
+        {
+          label: 'Investment',
+          data: investments,
+          borderColor: 'purple',
+          backgroundColor: 'rgba(128, 0, 128, 0.1)',
+          fill: true
+        },
+        {
+          label: 'Debt',
+          data: debt,
+          borderColor: 'orange',
+          backgroundColor: 'rgba(255, 165, 0, 0.1)',
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Monthly Financial Overview',
+          color: 'black'
+        },
+        legend: {
+            labels: {
+                color: 'black'
+            }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+</script>
 </body>
 </html>

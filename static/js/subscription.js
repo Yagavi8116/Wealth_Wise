@@ -1,456 +1,705 @@
-document.getElementById('subscriptionForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const serviceName = document.getElementById('serviceName').value;
-    const startDate = new Date(document.getElementById('startDate').value);
-    const endDate = new Date(document.getElementById('endDate').value);
-    const cost = document.getElementById('cost').value;
-    if (!serviceName || !startDate || !endDate || !cost) {
-        alert("Please fill in all details.");
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCHkdMeDrEVGtMIJ6_x8hlxyIaO87RAqsk",
+    authDomain: "wealthwise-3478b.firebaseapp.com",
+    projectId: "wealthwise-3478b",
+    storageBucket: "wealthwise-3478b.appspot.com",
+    messagingSenderId: "855679488886",
+    appId: "1:855679488886:web:3faa36dd9f9cbceabba057",
+    measurementId: "G-THF8SY4BZ2",
+    databaseURL: "https://wealthwise-3478b-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// Get Firebase services
+const auth = firebase.auth();
+const db = firebase.database();
+
+// Track authentication state
+auth.onAuthStateChanged(user => {
+    if (user) {
+        localStorage.setItem("userId", user.uid);
+        console.log("User is logged in:", user.uid);
+        document.getElementById("subscriptionForm").style.display = "block";
+    } else {
+        localStorage.removeItem("userId");
+        console.log("User is logged out");
+        document.getElementById("subscriptionForm").style.display = "none";
+        showPopupMessage("Please log in to manage subscriptions.", "#ff4444");
+    }
+});
+
+// Notification system
+const notifications = [];
+const notificationButton = document.getElementById("notificationButton");
+const notificationPopup = document.getElementById("notificationPopup");
+const notificationCount = document.getElementById("notificationCount");
+const notificationList = document.getElementById("notificationList");
+
+// Notification button click handler
+notificationButton.addEventListener('click', function(e) {
+    e.stopPropagation();
+    
+    // Toggle the notification popup visibility
+    if (notificationPopup.style.display === 'block') {
+        notificationPopup.style.display = 'none';
+    } else {
+        notificationPopup.style.display = 'block';
+        
+        // Mark all notifications as read when popup is opened
+        notifications.forEach(notification => {
+            notification.read = true;
+        });
+        notificationCount.style.display = 'none';
+        updateNotificationUI();
+    }
+});
+
+// Close notification popup when clicking outside
+document.addEventListener('click', function(event) {
+    if (!notificationButton.contains(event.target) && !notificationPopup.contains(event.target)) {
+        notificationPopup.style.display = 'none';
+    }
+});
+
+function addNotification(message) {
+    // Check if this notification already exists
+    if (!notifications.some(n => n.message === message)) {
+        const notification = {
+            message: message,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            read: false
+        };
+        
+        notifications.unshift(notification); // Add to beginning of array
+        updateNotificationUI();
+        
+        // Update notification count (only unread)
+        const unreadCount = notifications.filter(n => !n.read).length;
+        notificationCount.textContent = unreadCount;
+        
+        if (unreadCount > 0) {
+            notificationCount.style.display = 'inline';
+            
+            // Briefly highlight the notification button
+            notificationButton.style.animation = 'pulse 0.5s 2';
+            setTimeout(() => {
+                notificationButton.style.animation = '';
+            }, 1000);
+        }
+    }
+}
+
+function updateNotificationUI() {
+    notificationList.innerHTML = '';
+    
+    if (notifications.length === 0) {
+        notificationList.innerHTML = '<div class="notification-item">No notifications</div>';
         return;
     }
-    const logoMap = {
-        'spotify': '../static/logos/spotify.png',
-        'youtube': '../static/logos/youtube.png',
-        'google-drive': '../static/logos/google-drive.png',
-        'netflix': '../static/logos/netflix.png',
-        'amazon-prime': '../static/logos/amazon-prime.png',
-        'disney-hotstar': '../static/logos/disney-hotstar.png',
-        'linkedin': '../static/logos/linkedin.png',
-        'adobe': '../static/logos/adobe.png',
-        'flipkart': '../static/logos/flipkart.png'
-    };
-    const subscriptionList = document.getElementById('subscriptionList');
-    const li = document.createElement('li');
-    let today = new Date();
-    let totalDuration = (endDate - startDate) / (1000 * 60 * 60 * 24);
-    let elapsedDays = (today - startDate) / (1000 * 60 * 60 * 24);
-    let progressPercent = Math.max(0, Math.min(100, (elapsedDays / totalDuration) * 100));
-    let progressColor = getProgressColor(progressPercent);
-    li.innerHTML = `
-        <img src="${logoMap[serviceName]}" alt="${serviceName}" class="subscription-logo">
-        <div class="subscription-info">
-            <strong>${serviceName.toUpperCase()}</strong>
-            <br>
-            <span>Start: ${startDate.toDateString()} → End: ${endDate.toDateString()}</span>
-            <br>
-            <span>Cost: $${cost}</span>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar" style="width: ${progressPercent}%; background-color: ${progressColor}">
-                ${Math.round(progressPercent)}% (Today: ${today.toDateString()})
+    
+    notifications.forEach(notification => {
+        const item = document.createElement('div');
+        item.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+        
+        item.innerHTML = `
+            <div class="notification-message">${notification.message}</div>
+            <div class="notification-time">${notification.timestamp}</div>
+        `;
+        
+        notificationList.appendChild(item);
+    });
+}
+
+// Logo mapping for services
+const logoMap = {
+    'spotify': '../static/logos/spotify.png',
+    'youtube': '../static/logos/youtube.png',
+    'google-drive': '../static/logos/google-drive.png',
+    'netflix': '../static/logos/netflix.png',
+    'amazon-prime': '../static/logos/amazon-prime.png',
+    'linkedin': '../static/logos/linkedin.png'
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Form submission handler
+    document.getElementById("subscriptionForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+            showPopupMessage("Please log in to add subscriptions.", "#ff4444");
+            return;
+        }
+        
+        const serviceName = document.getElementById("serviceName").value;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const cost = document.getElementById("cost").value;
+
+        // Validation
+        if (!serviceName || !startDate || !endDate || !cost) {
+            showPopupMessage("Please fill all fields!", "#ff4444");
+            return;
+        }
+
+        if (new Date(endDate) <= new Date(startDate)) {
+            showPopupMessage("End date must be after start date", "#ff4444");
+            return;
+        }
+
+        try {
+            const subscriptionData = {
+                serviceName,
+                startDate,
+                endDate,
+                cost: parseFloat(cost),
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            // Save to Firebase
+            const newSubscriptionRef = db.ref(`users/${userId}/Subscriptions`).push();
+            await newSubscriptionRef.set(subscriptionData);
+            
+            // Add subscription ID to the data
+            subscriptionData.id = newSubscriptionRef.key;
+            
+            // Add to UI
+            //addSubscriptionToUI(subscriptionData);
+            
+            // Check for ending subscription
+            checkForEndingSubscription(serviceName, endDate);
+            
+            // Reset form
+            e.target.reset();
+            showPopupMessage("Subscription added!", "#4CAF50");
+             const subscriptionList = document.getElementById("subscriptionList");
+        subscriptionList.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+        } catch (error) {
+            console.error("Error saving subscription:", error);
+            showPopupMessage("Failed to save subscription", "#ff4444");
+        }
+    });
+
+    // Function to add subscription to UI
+    function addSubscriptionToUI(subscription) {
+        const subscriptionList = document.getElementById("subscriptionList");
+        const li = document.createElement("li");
+        li.setAttribute('data-id', subscription.id);
+        
+        const startDate = new Date(subscription.startDate);
+        const endDate = new Date(subscription.endDate);
+        const today = new Date();
+        
+        const totalDuration = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        const elapsedDays = (today - startDate) / (1000 * 60 * 60 * 24);
+        let progressPercent = Math.max(0, Math.min(100, (elapsedDays / totalDuration) * 100));
+        let progressColor = getProgressColor(progressPercent);
+
+        li.innerHTML = `
+            <img src="${logoMap[subscription.serviceName] || '../static/logos/default.png'}" 
+                 alt="${subscription.serviceName}" 
+                 class="subscription-logo">
+            <div class="subscription-info">
+                <strong>${subscription.serviceName.toUpperCase()}</strong>
+                <br>
+                <span>Start: ${formatDate(startDate)} → End: ${formatDate(endDate)}</span>
+                <br>
+                <span>Cost: ₹${subscription.cost}</span>
             </div>
-        </div>
-        <button class="action-btn">&gt;</button>
-        <div class="action-popup">
-            <p>Take Action</p>
-            <button class="terminate-btn">Terminate</button>
-            <button class="renew-btn">Renew</button>
-        </div>
-    `;
-    subscriptionList.appendChild(li);
-    document.getElementById('subscriptionForm').reset();
-    li.querySelector('.action-btn').addEventListener('click', function () {
-        const popup = li.querySelector('.action-popup');
-        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-    });
-    li.querySelector('.terminate-btn').addEventListener('click', function () {
-        li.remove();
-    });
-    li.querySelector('.renew-btn').addEventListener('click', function () {
-        let newStartDate = new Date();
-        let newEndDate = new Date(newStartDate);
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${progressPercent}%; background-color: ${progressColor}">
+                    ${Math.round(progressPercent)}% (Today: ${formatDate(today)})
+                </div>
+            </div>
+            <button class="action-btn">&gt;</button>
+            <div class="action-popup">
+                <p>Take Action</p>
+                <button class="terminate-btn">Terminate</button>
+                <button class="renew-btn">Renew</button>
+            </div>
+        `;
+        
+        subscriptionList.appendChild(li);
+        
+        // Add event listeners for action buttons
+        li.querySelector('.action-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            const popup = li.querySelector('.action-popup');
+            popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        li.querySelector('.terminate-btn').addEventListener('click', async function (e) {
+            e.stopPropagation();
+            showConfirmationPopup("Are you sure you want to terminate?", "#ff4444", async () => {
+                try {
+                    const userId = localStorage.getItem("userId");
+                    if (!userId) {
+                        showPopupMessage("Please log in to perform this action.", "#ff4444");
+                        return;
+                    }
+                    
+                    await db.ref(`users/${userId}/Subscriptions/${subscription.id}`).remove();
+                    li.remove();
+                    showPopupMessage("Subscription terminated!", "#ff4444");
+                } catch (error) {
+                    console.error("Error deleting subscription:", error);
+                    showPopupMessage("Failed to terminate subscription", "#ff4444");
+                }
+            });
+        });
+        
+        li.querySelector('.renew-btn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            showConfirmationPopup("Renew for another month?", "#4CAF50", async () => {
+                try {
+                    await renewSubscription(li, subscription);
+                } catch (error) {
+                    console.error("Error renewing subscription:", error);
+                    showPopupMessage("Failed to renew subscription", "#ff4444");
+                }
+            });
+        });
+    }
+
+    // Check if subscription is ending soon (7 days or less)
+    function checkForEndingSubscription(serviceName, endDate) {
+        const today = new Date();
+        const end = new Date(endDate);
+        const daysRemaining = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+        
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            addNotification(`${serviceName.toUpperCase()} ends in ${daysRemaining} day${daysRemaining === 1 ? '' : 's'}!`);
+        }
+    }
+
+    // Function to renew a subscription
+    async function renewSubscription(liElement, subscription) {
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+            showPopupMessage("Please log in to perform this action.", "#ff4444");
+            return;
+        }
+        
+        const newStartDate = new Date();
+        const newEndDate = new Date(newStartDate);
         newEndDate.setMonth(newEndDate.getMonth() + 1);
-        let progressBar = li.querySelector(".progress-bar");
+        
+        // Update in Firebase
+        await db.ref(`users/${userId}/Subscriptions/${subscription.id}`).update({
+            startDate: newStartDate.toISOString().split('T')[0],
+            endDate: newEndDate.toISOString().split('T')[0]
+        });
+        
+        // Update UI
+        liElement.querySelector('.subscription-info').innerHTML = `
+            <strong>${subscription.serviceName.toUpperCase()}</strong>
+            <br>
+            <span>Start: ${formatDate(newStartDate)} → End: ${formatDate(newEndDate)}</span>
+            <br>
+            <span>Cost: ₹${subscription.cost}</span>
+        `;
+        
+        const progressBar = liElement.querySelector('.progress-bar');
         progressBar.style.width = "0%";
         progressBar.style.backgroundColor = getProgressColor(0);
-        progressBar.innerHTML = `0% (Today: ${newStartDate.toDateString()})`;
-        li.querySelector('.subscription-info').innerHTML = `
-            <strong>${serviceName.toUpperCase()}</strong>
-            <br>
-            <span>Start: ${newStartDate.toDateString()} → End: ${newEndDate.toDateString()}</span>
-            <br>
-            <span>Cost: $${cost}</span>
-        `;
-        alert(`${serviceName} subscription renewed until ${newEndDate.toDateString()}`);
-    });
-});
-
-function getProgressColor(percent) {
-    if (percent <= 50) {
-        return "#4caf50"; 
-    } else if (percent <= 75) {
-        return "#ffcc00";
-    } else {
-        return "#ff4444"; 
+        progressBar.textContent = `0% (Today: ${formatDate(newStartDate)})`;
+        
+        showPopupMessage("Subscription renewed!", "#4CAF50");
     }
-}
 
+    // Helper function to format dates
+    function formatDate(date) {
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    }
 
-function updateProgressBars() {
-    let today = new Date();
-    document.querySelectorAll("#subscriptionList li").forEach(item => {
-        let dateMatch = item.innerHTML.match(/\w{3} \d{2} \d{4}/g);
-        if (dateMatch && dateMatch.length === 2) {
-            let startDate = new Date(dateMatch[0]);
-            let endDate = new Date(dateMatch[1]);
-            let totalDuration = (endDate - startDate) / (1000 * 60 * 60 * 24);
-            let elapsedDays = (today - startDate) / (1000 * 60 * 60 * 24);
+    // Progress bar color based on percentage
+    function getProgressColor(percent) {
+        if (percent <= 50) return "#4caf50";
+        if (percent <= 75) return "#ffcc00";
+        return "#ff4444";
+    }
+
+    // Update all progress bars and check for ending subscriptions
+    function updateProgressBars() {
+        document.querySelectorAll("#subscriptionList li").forEach(li => {
+            const infoDiv = li.querySelector('.subscription-info');
+            if (!infoDiv) return;
+            
+            // Extract dates from the formatted text
+            const dateText = infoDiv.textContent;
+            const dateMatches = dateText.match(/(Start: )(.+?)( → End: )(.+?)(\n|$)/);
+            
+            if (!dateMatches || dateMatches.length < 5) return;
+            
+            const startDateStr = dateMatches[2];
+            const endDateStr = dateMatches[4];
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+            const today = new Date();
+            
+            // Calculate days remaining for notification
+            const daysRemaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+            
+            // Add notification if subscription is ending soon (7 days or less)
+            if (daysRemaining <= 7 && daysRemaining > 0) {
+                const serviceName = li.querySelector('strong').textContent.trim();
+                addNotification(`${serviceName} ends in ${daysRemaining} day${daysRemaining === 1 ? '' : 's'}!`);
+            }
+            
+            // Update progress bar
+            const totalDuration = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            const elapsedDays = (today - startDate) / (1000 * 60 * 60 * 24);
             let progressPercent = Math.max(0, Math.min(100, (elapsedDays / totalDuration) * 100));
-            let progressBar = item.querySelector(".progress-bar");
-            let progressColor = getProgressColor(progressPercent);
-            progressBar.style.width = `${progressPercent}%`;
-            progressBar.style.backgroundColor = progressColor;
-            progressBar.innerHTML = `${Math.round(progressPercent)}% (Today: ${today.toDateString()})`;
-        }
-    });
-}
-
-setInterval(updateProgressBars, 86400000);
-
-document.getElementById("dropdownButton").addEventListener("click", function () {
-  document.getElementById("dropdownList").classList.toggle("show");
-});
-
-document.querySelectorAll(".dropdown-options li").forEach(item => {
-  item.addEventListener("click", function () {
-      let selectedService = this.getAttribute("data-value");
-      let selectedText = this.querySelector("span").innerText;
-      let logoSrc = this.querySelector("img").src;
-      console.log("Selected Text:", selectedText);
-      console.log("Logo Source:", logoSrc);
-      let dropdownButton = document.getElementById("dropdownButton");
-      let serviceNameInput = document.getElementById("serviceName");
-      let serviceDisplayInput = document.getElementById("serviceDisplay");
-      if (!dropdownButton || !serviceNameInput || !serviceDisplayInput) {
-          console.error("Dropdown elements missing! Check your HTML.");
-          return;
-      }
-      serviceDisplayInput.value = selectedText; 
-      serviceDisplayInput.style.background = `url('${logoSrc}') no-repeat left center`;
-      serviceDisplayInput.style.backgroundSize = "20px 20px";
-      serviceDisplayInput.style.paddingLeft = "30px";
-      serviceNameInput.value = selectedService;
-      document.getElementById("dropdownList").classList.remove("show");
-  });
-});
-
-document.addEventListener("click", function (event) {
-  if (!event.target.closest(".custom-dropdown")) {
-      document.getElementById("dropdownList").classList.remove("show");
-  }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  let dropdownButton = document.getElementById("dropdownButton");
-  let serviceDisplay = document.getElementById("serviceDisplay");
-  let serviceNameInput = document.getElementById("serviceName");
-  let dropdownList = document.getElementById("dropdownList");
-  let form = document.getElementById("subscriptionForm");
-  serviceDisplay.style.display = "none";
-  dropdownButton.style.display = "block";
-  document.querySelectorAll(".dropdown-options li").forEach(item => {
-      item.addEventListener("click", function () {
-          let selectedService = this.getAttribute("data-value");
-          let selectedText = this.querySelector("span").innerText;
-          let logoSrc = this.querySelector("img").src;
-          console.log("Selected Service:", selectedText);
-          console.log("Logo Source:", logoSrc);
-          serviceNameInput.value = selectedService;
-          serviceDisplay.value = selectedText;
-          serviceDisplay.style.background = `url('${logoSrc}') no-repeat left center`;
-          serviceDisplay.style.backgroundSize = "20px 20px";
-          serviceDisplay.style.paddingLeft = "30px";
-          dropdownButton.style.display = "none";
-          serviceDisplay.style.display = "block";
-          dropdownList.classList.remove("show");
-      });
-  });
-  form.addEventListener("submit", function (event) {
-      event.preventDefault();
-      console.log("Form submitted!");
-      serviceDisplay.style.display = "none";
-      dropdownButton.style.display = "block";
-      serviceDisplay.value = "";
-      serviceNameInput.value = "";
-  });
-});
-
-document.getElementById("askAiButton").addEventListener("click", function () {
-    document.getElementById("aiPopup").style.display = "block";
-    let subscriptions = [];
-    document.querySelectorAll("#subscriptionList li").forEach(item => {
-        subscriptions.push(item.textContent);
-    });
-    localStorage.setItem("subscriptions", JSON.stringify(subscriptions));
-});
-
-document.getElementById("closeAiPopup").addEventListener("click", function () {
-    document.getElementById("aiPopup").style.display = "none";
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const notificationButton = document.getElementById("notificationButton");
-    const notificationPopup = document.getElementById("notificationPopup");
-    const notificationCount = document.getElementById("notificationCount");
-    const notificationList = document.getElementById("notificationList");
-    let notifications = [
-        "Spotify subscription due in 3 days!",
-        "Netflix subscription renewed successfully.",
-        "Amazon Prime payment failed! Update your payment details."
-    ];
-    function updateNotifications() {
-        notificationList.innerHTML = ""; 
-        if (notifications.length === 0) {
-            notificationList.innerHTML = "<p>No new notifications</p>";
-            notificationCount.style.display = "none";
-        } else {
-            notifications.forEach(notification => {
-                let item = document.createElement("div");
-                item.className = "notification-item";
-                item.textContent = notification;
-                notificationList.appendChild(item);
-            });
-            notificationCount.textContent = notifications.length;
-            notificationCount.style.display = "inline"; 
-        }
+            
+            const progressBar = li.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${progressPercent}%`;
+                progressBar.style.backgroundColor = getProgressColor(progressPercent);
+                progressBar.textContent = `${Math.round(progressPercent)}% (Today: ${formatDate(today)})`;
+            }
+        });
     }
 
-    notificationButton.addEventListener("click", function () {
-        notificationPopup.style.display = notificationPopup.style.display === "none" ? "block" : "none";
-        updateNotifications();
-    });
-
-    document.addEventListener("click", function (event) {
-        if (!notificationPopup.contains(event.target) && !notificationButton.contains(event.target)) {
-            notificationPopup.style.display = "none";
-        }
-    });
-    updateNotifications();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("subscriptionList").addEventListener("click", function (event) {
-        if (event.target.classList.contains("terminate-btn")) {
-            showPopupMessage("Good Decision! 👍", "#ff4d4d");
-        } else if (event.target.classList.contains("renew-btn")) {
-            // Find the closest subscription item container
-            const subscriptionItem = event.target.closest("li");
-            if (!subscriptionItem) {
-                console.error("Subscription item not found!");
-                return;
-            }
-
-            // Find the progress bar inside the subscription item
-            const progressBar = subscriptionItem.querySelector(".progress-bar");
-            if (!progressBar) {
-                console.error("Progress bar not found inside subscription item!");
-                return;
-            }
-
-            showConfirmationPopup("Are you sure you want to renew? 🤔", "#4CAF50", () => {
-                renewSubscription(progressBar);
+    // Load user's subscriptions from Firebase
+    function loadSubscriptions() {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
+        
+        db.ref(`users/${userId}/Subscriptions`).on('value', snapshot => {
+            const subscriptions = snapshot.val() || {};
+            document.getElementById("subscriptionList").innerHTML = '';
+            
+            Object.entries(subscriptions).forEach(([id, sub]) => {
+                const subscriptionWithId = {...sub, id};
+                addSubscriptionToUI(subscriptionWithId);
+                
+                // Check for ending subscriptions when loading
+                checkForEndingSubscription(sub.serviceName, sub.endDate);
             });
-        }
-    });
+        }, error => {
+            console.error("Error loading subscriptions:", error);
+            showPopupMessage("Failed to load subscriptions", "#ff4444");
+        });
+    }
+
+    // Initialize
+    loadSubscriptions();
+    updateProgressBars();
+    setInterval(updateProgressBars, 86400000); // Update daily
 });
 
-
-// Function to show simple message pop-up
+// Popup message functions
 function showPopupMessage(message, bgColor) {
-    const popup = document.createElement("div");
-    popup.classList.add("popup-message");
+    const popup = document.createElement('div');
+    popup.className = 'popup-message';
     popup.textContent = message;
     popup.style.background = bgColor;
-
     document.body.appendChild(popup);
-
+    
+    setTimeout(() => popup.classList.add('show'), 10);
     setTimeout(() => {
-        popup.classList.add("show");
-    }, 100);
-
-    setTimeout(() => {
-        popup.classList.remove("show");
+        popup.classList.remove('show');
         setTimeout(() => popup.remove(), 300);
     }, 3000);
 }
 
-// Function to show Yes/No confirmation pop-up
-function showConfirmationPopup(message, bgColor, onConfirm) {
-    const existingPopup = document.querySelector(".popup-confirm");
-    if (existingPopup) existingPopup.remove(); // Remove any existing pop-up
-
-    const popup = document.createElement("div");
-    popup.classList.add("popup-message", "popup-confirm");
+function showConfirmationPopup(message, bgColor, confirmCallback) {
+    const popup = document.createElement('div');
+    popup.className = 'popup-message popup-confirm';
     popup.style.background = bgColor;
     
-    const text = document.createElement("p");
-    text.textContent = message;
-    
-    const btnContainer = document.createElement("div");
-    btnContainer.classList.add("popup-btn-container");
-
-    const yesBtn = document.createElement("button");
-    yesBtn.textContent = "Yes ✅";
-    yesBtn.classList.add("popup-btn", "yes-btn");
-    yesBtn.onclick = function () {
-        onConfirm(); // Call the function if Yes is clicked
-        closePopup(popup);
-    };
-
-    const noBtn = document.createElement("button");
-    noBtn.textContent = "No ❌";
-    noBtn.classList.add("popup-btn", "no-btn");
-    noBtn.onclick = function () {
-        closePopup(popup);
-    };
-
-    btnContainer.appendChild(yesBtn);
-    btnContainer.appendChild(noBtn);
-    
-    popup.appendChild(text);
-    popup.appendChild(btnContainer);
+    popup.innerHTML = `
+        <p>${message}</p>
+        <div class="popup-btn-container">
+            <button class="popup-btn yes-btn">Yes ✅</button>
+            <button class="popup-btn no-btn">No ❌</button>
+        </div>
+    `;
     
     document.body.appendChild(popup);
+    setTimeout(() => popup.classList.add('show'), 10);
     
-    setTimeout(() => {
-        popup.classList.add("show");
-    }, 100);
+    popup.querySelector('.yes-btn').addEventListener('click', () => {
+        confirmCallback();
+        closePopup(popup);
+    });
+    
+    popup.querySelector('.no-btn').addEventListener('click', () => closePopup(popup));
 }
 
-// Function to reset and restart the progress bar
-function renewSubscription(progressBar) {
-    if (progressBar) {
-        progressBar.style.width = "0%"; // Reset progress
-        showPopupMessage("Subscription Renewed! 🎉", "#008CBA");
-        
-        // Simulating progress increase
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += 1;
-            progressBar.style.width = progress + "%";
-            if (progress >= 100) clearInterval(interval);
-        }, 50); // Adjust speed as needed
-    }
-}
-
-// Function to remove the pop-up
 function closePopup(popup) {
-    popup.classList.remove("show");
+    popup.classList.remove('show');
     setTimeout(() => popup.remove(), 300);
 }
 
-// Add styles for the pop-up and progress bar
-const style = document.createElement("style");
-style.innerHTML = `
+// Add CSS styles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    .subscription-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        margin-right: 15px;
+    }
+    
+    #subscriptionList {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+    
+    #subscriptionList li {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        position: relative;
+    }
+    
+    .subscription-info {
+        flex: 1;
+        color: white;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .progress-bar-container {
+        width: 30%;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 0 15px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        transition: width 0.3s ease;
+        color: white;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+    
+    .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    .action-popup {
+        display: none;
+        position: absolute;
+        right: 50px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 10;
+    }
+    
+    .action-popup p {
+        margin: 0 0 5px 0;
+        color: white;
+    }
+    
+    .terminate-btn, .renew-btn {
+        padding: 5px 10px;
+        margin: 2px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    
+    .terminate-btn {
+        background: #ff4444;
+        color: white;
+    }
+    
+    .renew-btn {
+        background: #4CAF50;
+        color: white;
+    }
+    
     .popup-message {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.8);
         color: white;
-        padding: 20px 40px;
-        border-radius: 12px;
-        font-size: 18px;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         opacity: 0;
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity 0.3s, transform 0.3s;
         z-index: 1000;
-        text-align: center;
-        border: 2px solid rgba(255, 255, 255, 0.3);
     }
-
+    
     .popup-message.show {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1.1);
+        transform: translate(-50%, -50%) scale(1.05);
     }
-
+    
     .popup-confirm {
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        text-align: center;
     }
-
+    
     .popup-btn-container {
         display: flex;
+        justify-content: center;
         gap: 10px;
-        margin-top: 15px;
+        margin-top: 10px;
     }
-
+    
     .popup-btn {
-        padding: 8px 15px;
+        padding: 5px 15px;
         border: none;
-        border-radius: 6px;
+        border-radius: 4px;
         cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        transition: 0.2s;
     }
-
+    
     .yes-btn {
-        background-color: #28a745;
+        background: #4CAF50;
         color: white;
     }
-
-    .yes-btn:hover {
-        background-color: #218838;
-    }
-
+    
     .no-btn {
-        background-color: #dc3545;
+        background: #ff4444;
         color: white;
     }
-
-    .no-btn:hover {
-        background-color: #c82333;
+    
+    .notification-button {
+        position: relative;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
     }
-
-    /* Progress bar styles */
-    .subscription-item {
+    
+    .notification-popup {
+        right: 25px;
+        top: 100px;
+        position: fixed;  
+        background: #2c3e50;
+        color: white;
+        width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+    }
+    
+    .notification-popup h6 {
+        padding: 10px;
+        margin: 0;
+        background: #34495e;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    
+    .notification-item {
+        padding: 10px;
+        border-bottom: 1px solid #34495e;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .notification-item:hover {
+        background: #34495e;
+    }
+    
+    .notification-item.unread {
+        background: rgba(52, 152, 219, 0.1);
+        font-weight: bold;
+    }
+    
+    .notification-item.read {
+        opacity: 0.8;
+    }
+    
+    .notification-message {
+        margin-bottom: 5px;
+    }
+    
+    .notification-time {
+        font-size: 0.8rem;
+        color: #bdc3c7;
+    }
+    
+    #notificationCount {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        background: #222;
-        color: white;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 10px;
+        justify-content: center;
+        font-size: 0.7rem;
     }
-
-    .progress-container {
-        width: 60%;
-        height: 10px;
-        background: #555;
-        border-radius: 5px;
-        overflow: hidden;
-    }
-
-    .progress-bar {
-        height: 100%;
-        width: 0%;
-        background: #4CAF50;
-        transition: width 0.5s ease;
-    }
-
-    .terminate-btn, .renew-btn {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .terminate-btn {
-        background: #ff4d4d;
-        color: white;
-    }
-
-    .renew-btn {
-        background: #008CBA;
-        color: white;
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #subscriptionList li {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .action-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+        
+        .action-popup {
+            right: 50px;
+            top: 15px;
+            transform: none;
+        }
+        
+        .notification-popup {
+            width: 250px;
+            right: -20px;
+        }
     }
 `;
 document.head.appendChild(style);

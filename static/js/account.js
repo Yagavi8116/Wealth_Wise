@@ -213,3 +213,91 @@ function loadFinancialData() {
         console.log("Financial data loaded and sorted.");
     }).catch(error => console.error("Error loading financial data:", error));
 }
+
+document.getElementById("printPDF").addEventListener("click", async () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const user = auth.currentUser;
+    if (!user) {
+        alert("User not authenticated");
+        return;
+    }
+
+    const name = localStorage.getItem("fullName") || "User";
+    const accountNumber = localStorage.getItem("accountNumber") || "N/A";
+    const date = new Date().toLocaleDateString();
+
+    // Header
+    doc.setFontSize(18);
+    doc.text("WealthWise - Financial Statement", 20, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Name: ${name}`, 20, 30);
+    doc.text(`Account No: ${accountNumber}`, 20, 36);
+    doc.text(`Date: ${date}`, 20, 42);
+
+    // Table headers
+    const headers = ["#", "Year", "Month", "Income", "Savings", "Expenses", "Debt", "Investment"];
+    const startY = 50;
+    let rowY = startY;
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    headers.forEach((header, i) => {
+        doc.text(header, 20 + i * 25, rowY);
+    });
+
+    // Fetch and write table rows
+    const userRef = ref(db, `users/${user.uid}/Account_Details`);
+    try {
+        const snapshot = await get(userRef);
+        if (!snapshot.exists()) {
+            alert("No financial records found.");
+            return;
+        }
+
+        let records = [];
+        snapshot.forEach((childSnapshot) => {
+            records.push(childSnapshot.val());
+        });
+
+        // Sort
+        const monthOrder = {
+            Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+            Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12
+        };
+
+        records.sort((a, b) => {
+            if (a.year !== b.year) return a.year - b.year;
+            return monthOrder[a.month] - monthOrder[b.month];
+        });
+
+        doc.setFont("helvetica", "normal");
+        records.forEach((data, index) => {
+            rowY += 8;
+            if (rowY > 280) {
+                doc.addPage();
+                rowY = 20;
+            }
+            const values = [
+                (index + 1).toString(),
+                data.year,
+                data.month,
+                data.income,
+                data.savings,
+                data.expenses,
+                data.debt,
+                data.investment
+            ];
+            values.forEach((val, i) => {
+                doc.text(val.toString(), 20 + i * 25, rowY);
+            });
+        });
+
+        // Save PDF
+        doc.save(`WealthWise_Statement_${date.replace(/\//g, '-')}.pdf`);
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+    }
+});

@@ -3,25 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>    
+    <title>Subscription Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../static/css/home.css">
     <link rel="stylesheet" href="../static/css/subscription.css">
-    <link rel="icon" href="data:,"> 
+    <link rel="icon" href="data:,">
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database-compat.js"></script>
-    <!-- <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> -->
+    <style>
+        
+        .dashboard-content{
+            position: relative;
+            height: calc(100vh - 200px); /* Adjust based on your header height */
+            overflow-y: auto; /* Makes only the content scrollable */
+            padding: 20px;
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
     <div class='dashboard'>
         <div class="dashboard-nav">
             <header>
                 <a href="#!" class="menu-toggle">
-                    <i class="fas fa-bars" ></i>
+                    <i class="fas fa-bars"></i>
                 </a>
                 <a href="#" class="brand-logo" style="font-weight: bold; color:white">
                     <i class="fas fa-piggy-bank" style="color: white;"></i> 
@@ -44,9 +53,9 @@
                 <a href="./smartSubscription.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-clipboard-list" style="color:white"></i> Smart Subscription Tracker
                 </a>
-                <a href="./family.html" class="dashboard-nav-item" style=" color:white">
+                <!-- <a href="./family.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-users" style="color:white"></i> Family Finance Dashboard
-                </a>
+                </a> -->
                 <a href="./visualize.html" class="dashboard-nav-item" style=" color:white">
                     <i class="fas fa-chart-pie" style="color:white"></i> Expense Visualizer
                 </a>
@@ -72,7 +81,6 @@
                 <div class="frame">
                     <div class="container-box">                            
                         <div class="section">	
-                            <!-- <h1 style="font-family: 'Playfair Display', serif; color: white; text-align: center; margin: 50px auto;">Wealth Wise</h1> -->
                             <nav class="navbar">
                                 <div class="nav-right">
                                     <button id="notificationButton" class="notification-button">
@@ -86,27 +94,22 @@
                                 </div>
                             </nav>
                             <div class="container-sub">
-                                <!-- <h1 style="font-family: 'Playfair Display', serif; color: white;">Smart Subscription Tracker</h1> -->
                                 <div class='card-header'>
-                                    <h1 style="font-family: 'Playfair Display', serif; color: white;"> Smart Subscription Tracker</h1>
+                                    <h1 style="font-family: 'Playfair Display', serif; color: white;">Smart Subscription Tracker</h1>
                                 </div>
                                 <form id="subscriptionForm">
                                     <label for="serviceName" style="font-family: 'Playfair Display', serif; color: white;">
                                         <i class="fas fa-list-alt"></i> Choose the subscribed service:
                                     </label>
-                                    <div class="custom-dropdown">
-                                        <input type="text" id="serviceDisplay" placeholder="Selected service" readonly style="color: white;">
-                                        <button id="dropdownButton"><span class="placeholder-text"> Select a Service</span></button>
-                                        <ul id="dropdownList" class="dropdown-options">
-                                            <li data-value="spotify"><img src="../static/logos/spotify.png" alt="Spotify"> <span>Spotify</span></li>
-                                            <li data-value="youtube"><img src="../static/logos/youtube.png" alt="YouTube"> <span>YouTube</span></li>
-                                            <li data-value="google-drive"><img src="../static/logos/google-drive.png" alt="Google Drive"> <span>Google Drive</span></li>
-                                            <li data-value="netflix"><img src="../static/logos/netflix.png" alt="Netflix"> <span>Netflix</span></li>
-                                            <li data-value="amazon-prime"><img src="../static/logos/amazon-prime.png" alt="Amazon Prime"> <span>Amazon Prime</span></li>
-                                            <li data-value="linkedin"><img src="../static/logos/linkedin.png" alt="LinkedIn"> <span>LinkedIn</span></li>
-                                        </ul>
-                                        <input type="hidden" id="serviceName">
-                                    </div>
+                                    <select id="serviceName" required>
+                                        <option value="" disabled selected>Select a Service</option>
+                                        <option value="spotify">Spotify</option>
+                                        <option value="youtube">YouTube</option>
+                                        <option value="google-drive">Google Drive</option>
+                                        <option value="netflix">Netflix</option>
+                                        <option value="amazon-prime">Amazon Prime</option>
+                                        <option value="linkedin">LinkedIn</option>
+                                    </select>                                    
                                     <label for="nextPaymentDate" style="font-family: 'Playfair Display', serif; color: white;">
                                         <i class="fas fa-calendar-alt"></i> Subscription Duration:
                                     </label>
@@ -119,47 +122,46 @@
                                         <i class="fas fa-rupee-sign"></i> Enter the amount:
                                     </label>
                                     <input type="number" id="cost" placeholder="Enter amount in ₹ " required>
-                                    <button type="submit">Add Subscription</button>
+                                    <button type="submit" id="actionBtn">Add Subscription</button>
                                 </form>
                                 <h2 style="font-family: 'Playfair Display', serif; color: white;">My Subscriptions</h2>
                                 <ul id="subscriptionList"></ul>
-                                <div id="notificationPopup" class="notification-popup" style="display:none;"></div>
                             </div>
-                            <!-- <button id="askAiButton" class="ai-button">
-                                <i class="fas fa-robot"></i> Ask AI
-                            </button> -->
-                            <div id="aiPopup" class="ai-popup">
-                                <div class="ai-popup-content">
-                                    <span id="closeAiPopup" class="close">&times;</span>
-                                    <iframe id="aiFrame" src="subscriptionAnalysis.html"></iframe>
-                                </div>
-                            </div>  
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Bootstrap Modal for Session Timeout -->
-    <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sessionTimeoutLabel">Session Expired</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Your session has timed out. Please log in again.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="redirectToLogin">Login Again</button>
-                </div>
-            </div>
-        </div>
-    </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="../static/js/subscription.js"></script>
-<script type="module" src="../static/js/home.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="../static/js/subscription.js"></script>
+    <script type="module" src="../static/js/home.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHkdMeDrEVGtMIJ6_x8hlxyIaO87RAqsk",
+            authDomain: "wealthwise-3478b.firebaseapp.com",
+            projectId: "wealthwise-3478b",
+            storageBucket: "wealthwise-3478b.firebasestorage.app",
+            messagingSenderId: "855679488886",
+            appId: "1:855679488886:web:3faa36dd9f9cbceabba057",
+            measurementId: "G-THF8SY4BZ2",
+            databaseURL: "https://wealthwise-3478b-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+
+        // Expose Firebase objects to global window for subscription.js
+        window.firebaseApp = app;
+        window.firebaseDB = database;
+        window.firebaseRef = ref;
+        window.firebasePush = push;
+    </script>    
 </body>
 </html>
