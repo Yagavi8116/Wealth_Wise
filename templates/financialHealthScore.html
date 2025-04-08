@@ -76,6 +76,50 @@
                         <div class="container mt-5" style="margin-bottom: 50px;">                            
                             <form id="financial-form">
                                 <div class="row align-items-center mb-3">
+                                    <label for="year" class="col-md-5 text-white text-start">
+                                        <i class="fas fa-calendar-alt" style="margin-left: 40px; font-weight: bold;"></i> Year:
+                                    </label>
+                                    <div class="col-md-6">
+                                        <select class="form-select form-select-lg bg-dark text-white w-100" id="year" name="year" required>
+                                            <option value="">Select Year</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2025">2025</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row align-items-center mb-3">
+                                    <label for="month" class="col-md-5 text-white text-start">
+                                        <i class="fas fa-calendar" style="margin-left: 40px; font-weight: bold;"></i> Month:
+                                    </label>
+                                    <div class="col-md-6">
+                                        <select class="form-select form-select-lg bg-dark text-white w-100" id="month" name="month" required>
+                                            <option value="">Select Month</option>
+                                            <option value="January">January</option>
+                                            <option value="February">February</option>
+                                            <option value="March">March</option>
+                                            <option value="April">April</option>
+                                            <option value="May">May</option>
+                                            <option value="June">June</option>
+                                            <option value="July">July</option>
+                                            <option value="August">August</option>
+                                            <option value="September">September</option>
+                                            <option value="October">October</option>
+                                            <option value="November">November</option>
+                                            <option value="December">December</option>
+                                        </select>
+                                    </div>
+                                </div>                              
+                                <div class="row align-items-center mb-3">
+                                    <label for="income" class="col-md-4 text-white text-start">
+                                        <i class="fas fa-money-bill-wave" style="margin-left: 40px; font-weight: bold;"></i> Income:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control form-control-lg bg-dark text-white w-100" id="income" name="income" placeholder="Enter Income details" required>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center mb-3">
                                     <label for="spending" class="col-md-4 text-white text-start">
                                         <i class="fas fa-money-bill-wave" style="margin-left: 40px; font-weight: bold;"></i> Spending Habits:
                                     </label>
@@ -211,45 +255,7 @@
     <script type="module" src="../static/js/home.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script>
-    //     document.getElementById("financial-form").addEventListener("submit", function(event) {
-    //     event.preventDefault();
-    //     let formData = new FormData(this);
-    //     fetch("http://127.0.0.1:5000/calculateScore", {
-    //         method: "POST",
-    //         body: formData
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.error) {
-    //             const errorMessage = data.error;
-    //             document.getElementById("score-result").innerHTML = `<span class="text-danger">${errorMessage}</span>`;
-    //             document.getElementById("speaker-button").style.display = "none"; // Hide Speaker Button
-    //         } else {
-    //             const rawResponse = data.score;
-    //             const scoreMatch = rawResponse.match(/Financial Health Score:\s*(\d+)/);
-    //             const score = scoreMatch ? scoreMatch[1] : "N/A";
-    //             const explanationMatch = rawResponse.match(/Explanation:\s*(.+)/s);
-    //             const explanation = explanationMatch ? explanationMatch[1].trim() : "No explanation provided.";
-    //             const categories = explanation.split("*").map(item => item.trim()).filter(item => item);
-    //             document.getElementById("score-result").innerHTML = `<strong>Score: ${score}</strong>`;
-    //             const assessmentList = document.getElementById("assessment-list");
-    //             assessmentList.innerHTML = "";
-    //             categories.forEach(category => {
-    //                 if (category) {
-    //                     const li = document.createElement("li");
-    //                     li.innerText = category;
-    //                     assessmentList.appendChild(li);
-    //                 }
-    //             });
-    //             const speakerButton = document.getElementById("speaker-button");
-    //             speakerButton.style.display = "inline-block";
-    //             speakerButton.dataset.responseText = `Financial Health Score: ${score}. ${explanation}`;
-    //         }
-    //     })
-    //     .catch(error => console.error("Error:", error));
-    // });
-
-        document.getElementById("financial-form").addEventListener("submit", function(event) {
+       document.getElementById("financial-form").addEventListener("submit", function(event) {
         event.preventDefault();
         let formData = new FormData(this);
 
