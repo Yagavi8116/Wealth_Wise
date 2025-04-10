@@ -370,51 +370,6 @@ iframe {
     color: white;
     line-height: 20px;
 }
-/* 
-.action-btn {
-    position: relative;
-    background: #333;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    margin-left: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    width: 5px;
-}
-
-.action-popup {
-    display: none;
-    position: absolute;
-    background: white;
-    right: -150px; 
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
-
-.terminate-btn, .renew-btn {
-    display: block;
-    width: 100%;
-    margin: 5px 0;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.terminate-btn {
-    background: red;
-    color: white;
-}
-
-.renew-btn {
-    background: green;
-    color: white;
-} */
 
 .action-popup {
     display: none;

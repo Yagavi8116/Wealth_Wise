@@ -8,40 +8,36 @@ h2 {
     color: white;
 }
 
-/* Goal-Based Budgeting Card */
 .card {
     background: #67065f;
     border-radius: 12px;
-    border: 2px solid #333; /* Dark border */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Adds a deeper shadow effect */
+    border: 2px solid #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
 }
 
-/* Card Header */
 .card-header {
-    border-bottom: 2px solid #222; /* Dark bottom border */
+    border-bottom: 2px solid #222; 
     padding: 10px;
     text-align: center;
 }
 
-/* Goal Form Heading */
 .card h4 {
     font-weight: bold;
     color: white;
-    border-bottom: 2px solid #444; /* Dark underline */
+    border-bottom: 2px solid #444; 
     padding-bottom: 10px;
 }
 
-/* Input Fields */
 .form-control {
     border-radius: 8px;
-    border: 2px solid #444; /* Dark border */
+    border: 2px solid #444; 
     background: #fff;
 }
 
-/* Add Goal Button */
+
 .btn-primary {
     background: #007bff;
-    border: 2px solid #004494; /* Darker border */
+    border: 2px solid #004494; 
     transition: all 0.3s ease-in-out;
     font-weight: bold;
 }
@@ -51,106 +47,62 @@ h2 {
     border: 2px solid #ffffff;
 }
 
-/* Progress Bar */
 .progress-bar {
     transition: width 0.5s ease-in-out;
 }
 
-/* Goal Entry Cards */
 .goal-card {
     background: white;
     border-radius: 12px;
     padding: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     margin-bottom: 15px;
-    border-left: 5px solid #004494; /* Dark blue left highlight */
-    border: 2px solid #222; /* Dark border */
+    border-left: 5px solid #004494; 
+    border: 2px solid #222;
 }
 
-/* Dashboard Content */
+
 .dashboard-content {
     padding-top: 100px;
     padding-bottom: 50px;
 }
 
-/* Center Goal Form */
+
 .card {
     max-width: 500px;
     margin: 0 auto;
 }
 
-/* Adjust Input Field Width */
 .form-control {
     max-width: 80%;
     margin: 0 auto;
 }
 
-/* Delete & Add Savings Button */
 .btn-sm {
     padding: 8px 12px;
     font-size: 14px;
     border-radius: 6px;
-    border: 2px solid #222; /* Dark border */
+    border: 2px solid #222; 
 }
 
-/* Goal List Styling */
 #goalList .card {
-    border: 2px solid #222; /* Dark border */
+    border: 2px solid #222; 
     border-radius: 12px;
     padding: 10px;
     background: #67065f;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Hover Effect for Goal Cards */
 #goalList .card:hover {
     border-color: #080808;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .card {
-    max-width: 750px; /* Controls width */
-    margin: 0 auto; /* Centers the card */
+    max-width: 750px; 
+    margin: 0 auto;
 }
-/* 
-.progress{
-    height: 25px;
-    background: #eee;
-    border-radius: 20px;
-    overflow: visible;
-    line-height: 15px;
-    margin: 20px 0 40px 0;
-}
-.progress .progress-bar{
-    border-radius: 20px;
-    position: relative;
-    animation: animate-positive 2s;
-    background-color: #28a745 !important;
-}
-.progress .progress-value{
-    position: relative;
-    left: -45px;
-    top: 4px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-}
-.progress .progress-value:after{
-    position: relative;
-    left: -45px;
-    top: 4px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-}
-@-webkit-keyframes animate-positive{
-    0% { width: 0%; }
-}
-@keyframes animate-positive{
-    0% { width: 0%; }
-} */
+
 .progress {
     height: 25px;
     background: #eee;
@@ -164,11 +116,11 @@ h2 {
     border-radius: 20px;
     position: relative;
     animation: animate-positive 2s;
-    background-color: #28a745 !important; /* Green progress */
+    background-color: #28a745 !important; 
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Aligns value to the right */
-    padding-right: 5px; /* Adjust spacing */
+    justify-content: flex-end; 
+    padding-right: 5px;
     position: relative;
 }
 

@@ -7,36 +7,8 @@ import os
 app = Flask(__name__)
 CORS(app)
 genai.configure(api_key="AIzaSyAFzVK4fpeQgILVWHeWt2a08fpRfvFF0fI") 
-
-# model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
-# model = genai.GenerativeModel("models/gemini-1.5-pro")  
+ 
 model = genai.GenerativeModel("models/gemini-2.0-flash-thinking-exp-01-21")  
-
-# def calculate_financial_score(spending, savings, debt, investments):
-#     prompt = (
-#         "You are a financial expert. Based on the following user's financial details, "
-#         "assign a financial health score between 1 and 100 and provide a brief explanation.\n\n"
-#         f"- Spending habits: {spending}\n"
-#         f"- Savings: {savings}\n"
-#         f"- Debt: {debt}\n"
-#         f"- Investments: {investments}\n\n"
-#         "Format your response as:\n"
-#         "Score: [number between 1-100]\n"
-#         "Explanation: [brief summary]"
-#     )
-
-#     response = model.generate_content(prompt)
-#     response_text = response.text.strip() if response.text else "Unable to generate a score."
-#     match = re.search(r"Score:\s*(\d+)", response_text)
-
-#     if match:
-#         score = int(match.group(1))
-#         if score == 0: 
-#             score = random.randint(1, 100)
-#     else:
-#         score = random.randint(1, 100)  
-
-#     return {"score": score, "explanation": response_text}
 
 def calculate_financial_score(year, month, income, spending, savings, debt, investments):
     prompt = (
@@ -119,20 +91,6 @@ def financial_health():
 @app.route('/subscriptionAnalysis.html')
 def sub():
     return render_template('subscriptionAnalysis.html')
-
-# @app.route('/calculateScore', methods=['POST'])
-# def calculate_score():
-#     spending = request.form.get('spending')
-#     savings = request.form.get('savings')
-#     debt = request.form.get('debt')
-#     investments = request.form.get('investments')
-
-#     if not spending or not savings or not debt or not investments:
-#         return jsonify({"error": "Please fill in all the fields."})
-
-#     result = calculate_financial_score(spending, savings, debt, investments)
-
-#     return jsonify(result)
 
 @app.route('/calculateScore', methods=['POST'])
 def calculate_score():

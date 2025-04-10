@@ -1,23 +1,23 @@
 body {
-    background-color: #67065f !important; /* Background color */
+    background-color: #67065f !important;
 }
 
 .financial-details {
-    background-color: #800070 !important; /* Slightly different shade for contrast */
-    color: white !important; /* Text color */
+    background-color: #800070 !important;
+    color: white !important;
 }
 
 .table {
-    color: white !important; /* Table text color */
+    color: white !important;
 }
 
 .bg-dark {
-    background-color: #50004a !important; /* Darker shade for headers */
+    background-color: #50004a !important;
 }
 
 .input-group-text {
-    background-color: #50004a !important; /* Icon background color */
-    color: white !important; /* Icon color */
+    background-color: #50004a !important; 
+    color: white !important; 
 }
 
 .form-select,
@@ -42,7 +42,6 @@ body {
     background-color: #45a049 !important;
 }
 
-/* FontAwesome Icon Colors */
 .fas {
     color: white !important;
 }
@@ -52,7 +51,7 @@ body {
     vertical-align: middle;
 }
 .table th:first-child, .table td:first-child {
-    width: 50px; /* Adjust width for serial number */
+    width: 50px;
 }
 .table th, .table td {
     padding: 8px;
@@ -60,13 +59,13 @@ body {
 
 ::placeholder {
     color: white !important;
-    opacity: 1 !important; /* Ensure the color is fully visible */
+    opacity: 1 !important; 
 }
 
-:-ms-input-placeholder { /* For Internet Explorer */
+:-ms-input-placeholder {
     color: white !important;
 }
 
-::-ms-input-placeholder { /* For Edge */
+::-ms-input-placeholder { 
     color: white !important;
 }

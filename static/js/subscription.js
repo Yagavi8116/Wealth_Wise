@@ -167,11 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
             // Add subscription ID to the data
             subscriptionData.id = newSubscriptionRef.key;
-            
-            // Add to UI
-            //addSubscriptionToUI(subscriptionData);
-            
-            // Check for ending subscription
+        
             checkForEndingSubscription(serviceName, endDate);
             
             // Reset form
